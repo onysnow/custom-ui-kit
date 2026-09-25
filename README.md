@@ -1,10 +1,10 @@
-# Lovable UI Kit
+#  UI Kit
 
 A component library for web
 
 This project was built with [Lovable](https://lovable.dev).
 
-## Build with Lovable
+##
 
 Continue developing this project in the [Lovable editor](https://lovable.dev/projects/6c509f71-5eae-45e3-89b8-7e6a2714cc4a).
 
