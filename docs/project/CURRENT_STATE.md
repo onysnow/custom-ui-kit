@@ -1,15 +1,26 @@
 # Current State
 
-Last updated: 2026-09-25
+Last updated: 2026-09-25 (EXP-001 workspace reconciliation)
 
 ## Canonical branch
 Development occurs on `dev`. The repository and canonical documents on that branch are the source of truth.
 
-## Current state
-- GitHub development branch established.
-- Repository migration from the previous application to the Component Library is in progress.
-- Semantic production React UI remains independent of optional experimental rendering.
-- EXP-001 remains the immediate verification gate.
+## What exists
+- pnpm workspace root using Node >=22 and pnpm 10.17.1.
+- `@library/ui` Vite library package with React 19 peer dependencies, Vitest/RTL setup, Button and IconButton implementations/tests, shared styles and tokens.
+- Storybook workspace configuration; package identity was reconciled to `@library/storybook` and its UI dependency to `@library/ui`.
+- Storybook TypeScript project configuration was added.
 
-## Next action
-Finish baseline workspace import, then run dependency installation, typecheck, tests, library build, and Storybook build before expanding production or experimental runtime scope.
+## Verification state
+EXP-001 is NOT VERIFIED. A fresh executable checkout was attempted this run, but the execution environment could not resolve github.com, so dependency installation and the command gate could not run.
+
+## Known repository issues
+- The migration from the previous application is not yet fully audited for obsolete files.
+- IconButton Storybook coverage still needs to be confirmed in the actual branch.
+- Automated CI workflow creation was attempted but repository write policy blocked that specific workflow-file mutation in this run.
+
+## Current blocker
+External DNS/network access in the executable environment prevents cloning/installing the dev branch. GitHub connector writes remain available.
+
+## Next highest-value action
+On the next run, re-attempt executable checkout/install first. If network is available, run typecheck, tests, library build and Storybook build, fix every failure, and record exact results. If still blocked, continue only concrete EXP-001 repository reconciliation rather than expanding scope.
