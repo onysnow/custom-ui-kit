@@ -1,0 +1,1 @@
+{"name":"@custom-ui-kit/storybook","private":true,"type":"module","scripts":{"storybook":"storybook dev -p 6006","build-storybook":"storybook build"},"dependencies":{"@custom-ui-kit/ui":"workspace:*","react":"^19.1.1","react-dom":"^19.1.1"},"devDependencies":{"@storybook/addon-a11y":"^9.1.5","@storybook/addon-docs":"^9.1.5","@storybook/react-vite":"^9.1.5","storybook":"^9.1.5"}}
