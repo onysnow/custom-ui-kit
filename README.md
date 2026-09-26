@@ -1,24 +1,36 @@
-#  UI Kit
+# Component Library
 
-A component library for web
+A pnpm workspace for the Component Library engineering program.
 
-This project was built with [Lovable](https://lovable.dev).
+## Canonical development branch
 
-##
+Development occurs on `dev`. Do not use `main` as the active engineering branch.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/6c509f71-5eae-45e3-89b8-7e6a2714cc4a).
+## Requirements
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+- Node.js 22 or newer
+- pnpm 10.17.1
+
+## Workspace
+
+- `packages/ui` — semantic, accessible React production UI library
+- `apps/storybook` — Storybook development and validation workspace
+- `docs/project` — canonical project state, roadmap, and open questions
+- `research` — experiments, technology ledger, and run records
+
+Experimental rendering is optional. Production UI must function without GPU rendering.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+git clone --branch dev --single-branch https://github.com/onysnow/custom-ui-kit.git
+cd custom-ui-kit
+corepack enable
+pnpm install
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm build-storybook
 ```
+
+EXP-001 is not verified until the complete gate executes successfully against `dev`. See `docs/project/CURRENT_STATE.md` for current verified state.
