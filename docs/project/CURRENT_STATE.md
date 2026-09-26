@@ -20,13 +20,13 @@ EXP-001 is BLOCKED / NOT VERIFIED. A fresh executable checkout was retried on 20
 ## Known repository issues
 - Neither pnpm-lock.yaml nor package-lock.json exists on dev. Generate and commit the pnpm lockfile from the first successful canonical install.
 - Confirmed migration residue remains: bun.lock, bunfig.toml, .prettierrc, .prettierignore, eslint.config.js, and components.json target the superseded Lovable/TanStack/Bun/root-src application and should be removed.
-- README.md and AGENTS.md still describe the obsolete Lovable/npm/main workflow and should be superseded.
+- README.md has been superseded with the canonical pnpm/dev workflow. AGENTS.md still contains obsolete Lovable guidance and should be superseded.
 - Repository deletion/update safety checks currently prevent that cleanup from being persisted.
 - apps/playground is not currently established on dev; it is not required for EXP-001.
 - Canonical ARCHITECTURE and DECISIONS documents remain subordinate to EXP-001.
 
 ## Current blocker
-External DNS/network access in the executable environment prevents cloning/installing dev. GitHub connector reads work, but repository safety checks currently block the required migration cleanup writes.
+External DNS/network access in the executable environment prevents cloning/installing dev. GitHub connector reads work, but repository safety checks currently block the remaining migration cleanup writes, including AGENTS.md.
 
 ## Next highest-value action
 Retry executable checkout/install first. When networking is available, remove the verified migration residue, install with pnpm, commit the canonical lockfile, then run typecheck, tests, library build, and Storybook build. Fix every failure and rerun the complete gate before EXP-006.
