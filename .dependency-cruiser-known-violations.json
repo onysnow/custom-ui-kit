@@ -1,0 +1,244 @@
+[
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/core/config.ts",
+    "to": "packages/fx/src/engine/preview.ts",
+    "unresolvedTo": "../engine/preview",
+    "dependencyTypes": ["local", "type-only", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-core-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/core/gl-loop.ts",
+    "to": "packages/fx/src/engine/scheduler.ts",
+    "unresolvedTo": "../engine/scheduler",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-core-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/core/tuning.ts",
+    "to": "packages/fx/src/optics/edge-profile.ts",
+    "unresolvedTo": "../optics/edge-profile",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-core-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/engine/room-texture.ts",
+    "to": "packages/fx/src/optics/environment.ts",
+    "unresolvedTo": "../optics/environment",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-engine-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/engine/type-layer.ts",
+    "to": "packages/fx/src/optics/casters.ts",
+    "unresolvedTo": "../optics/casters",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-engine-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/engine/type-layer.ts",
+    "to": "packages/fx/src/scene/scene.ts",
+    "unresolvedTo": "../scene/scene",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-engine-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/light/lights.ts",
+    "to": "packages/fx/src/secrets/red-room.ts",
+    "unresolvedTo": "../secrets/red-room",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-light-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/light/lights.ts",
+    "to": "packages/fx/src/tools/held.ts",
+    "unresolvedTo": "../tools/held",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-light-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/light/scene-env.ts",
+    "to": "packages/fx/src/scene/scene.ts",
+    "unresolvedTo": "../scene/scene",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-light-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/backlit-colour.ts",
+    "to": "packages/fx/src/light/blackbody.ts",
+    "unresolvedTo": "../light/blackbody",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/bevel-filters.ts",
+    "to": "packages/fx/src/materials/presets.ts",
+    "unresolvedTo": "../materials/presets",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/casters.ts",
+    "to": "packages/fx/src/materials/surfaces.ts",
+    "unresolvedTo": "../materials/surfaces",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/casters.ts",
+    "to": "packages/fx/src/scene/scene.ts",
+    "unresolvedTo": "../scene/scene",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/crack-light.ts",
+    "to": "packages/fx/src/light/beam.ts",
+    "unresolvedTo": "../light/beam",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/crack-view.ts",
+    "to": "packages/fx/src/scene/scene.ts",
+    "unresolvedTo": "../scene/scene",
+    "dependencyTypes": ["local", "type-only", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/edge-side.ts",
+    "to": "packages/fx/src/materials/presets.ts",
+    "unresolvedTo": "../materials/presets",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/floor-light-shader.ts",
+    "to": "packages/fx/src/light/light-uniforms.ts",
+    "unresolvedTo": "../light/light-uniforms",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/glass-light-shader.ts",
+    "to": "packages/fx/src/light/light-uniforms.ts",
+    "unresolvedTo": "../light/light-uniforms",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/glass-light-shader.ts",
+    "to": "packages/fx/src/light/lights.ts",
+    "unresolvedTo": "../light/lights",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/stack.ts",
+    "to": "packages/fx/src/materials/presets.ts",
+    "unresolvedTo": "../materials/presets",
+    "dependencyTypes": ["local", "type-only", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/optics/thin-film.ts",
+    "to": "packages/fx/src/materials/presets.ts",
+    "unresolvedTo": "../materials/presets",
+    "dependencyTypes": ["local", "type-only", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-optics-must-not-import-upward"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "packages/fx/src/scene/scene.ts",
+    "to": "packages/fx/src/adapters/css-vars.ts",
+    "unresolvedTo": "../adapters/css-vars",
+    "dependencyTypes": ["local", "import"],
+    "rule": {
+      "severity": "error",
+      "name": "layer-scene-must-not-import-upward"
+    }
+  }
+]

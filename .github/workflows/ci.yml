@@ -15,6 +15,7 @@ jobs:
       # Packages type-check against each other's built declarations, so build them first (in dependency order).
       - run: bun run build:packages
       - run: bun run lint
+      - run: bun run check:layers
       - run: bun run typecheck
       - run: bun run test
       - run: bun run build
