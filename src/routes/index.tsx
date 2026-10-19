@@ -19,13 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -40,12 +34,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -93,10 +82,16 @@ function Index() {
             OnySnowapi
           </a>
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            <a href="#gallery" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a
+              href="#gallery"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
               Components
             </a>
-            <a href="#install" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a
+              href="#install"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
               Install
             </a>
           </nav>
@@ -116,12 +111,11 @@ function Index() {
             12 starter components
           </Badge>
           <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl lg:text-7xl">
-            Components that feel{" "}
-            <span className="text-primary">warm & alive</span>
+            Components that feel <span className="text-primary">warm & alive</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-            OnySnowapi is a friendly web component library designed for fast,
-            accessible interfaces. Copy, paste, and ship with confidence.
+            OnySnowapi is a friendly web component library designed for fast, accessible interfaces.
+            Copy, paste, and ship with confidence.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button size="lg" className="gap-2">
@@ -146,8 +140,7 @@ function Index() {
               </div>
               <CardTitle>Warm by default</CardTitle>
               <CardDescription>
-                Creamy backgrounds, soft orange accents, and inviting contrast
-                that feels human.
+                Creamy backgrounds, soft orange accents, and inviting contrast that feels human.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -158,8 +151,7 @@ function Index() {
               </div>
               <CardTitle>Accessible</CardTitle>
               <CardDescription>
-                Built on Radix primitives with keyboard navigation, focus rings,
-                and ARIA roles.
+                Built on Radix primitives with keyboard navigation, focus rings, and ARIA roles.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -170,8 +162,7 @@ function Index() {
               </div>
               <CardTitle>Composable</CardTitle>
               <CardDescription>
-                Small, focused pieces you can mix, match, and extend without
-                fighting the styles.
+                Small, focused pieces you can mix, match, and extend without fighting the styles.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -182,9 +173,7 @@ function Index() {
       <section id="gallery" className="px-6 py-16 md:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Meet the library
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Meet the library</h2>
             <p className="mt-3 text-muted-foreground">
               Twelve starter components, ready to drop into your next project.
             </p>
@@ -270,9 +259,7 @@ function Index() {
               <Alert className="pl-10">
                 <Info className="top-3.5 left-3.5 h-4 w-4" />
                 <AlertTitle>Heads up</AlertTitle>
-                <AlertDescription>
-                  This is a friendly alert message.
-                </AlertDescription>
+                <AlertDescription>This is a friendly alert message.</AlertDescription>
               </Alert>
             </GalleryCard>
 
@@ -291,9 +278,7 @@ function Index() {
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <Avatar>
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    OS
-                  </AvatarFallback>
+                  <AvatarFallback className="bg-primary text-primary-foreground">OS</AvatarFallback>
                 </Avatar>
               </div>
             </GalleryCard>
@@ -488,7 +473,10 @@ function Index() {
             <a href="#gallery" className="hover:text-foreground transition-colors">
               Components
             </a>
-            <a href="mailto:hello@onysnowapi.dev" className="flex items-center gap-1 hover:text-foreground transition-colors">
+            <a
+              href="mailto:hello@onysnowapi.dev"
+              className="flex items-center gap-1 hover:text-foreground transition-colors"
+            >
               <Mail className="h-3.5 w-3.5" />
               Contact
             </a>

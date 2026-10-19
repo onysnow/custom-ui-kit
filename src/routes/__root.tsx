@@ -78,10 +78,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "OnySnowapi — Friendly Web Components" },
-      { name: "description", content: "A warm, accessible component library for the web. Copy, paste, and ship faster with OnySnowapi." },
+      {
+        name: "description",
+        content:
+          "A warm, accessible component library for the web. Copy, paste, and ship faster with OnySnowapi.",
+      },
       { name: "author", content: "OnySnowapi" },
       { property: "og:title", content: "OnySnowapi — Friendly Web Components" },
-      { property: "og:description", content: "A warm, accessible component library for the web. Copy, paste, and ship faster with OnySnowapi." },
+      {
+        property: "og:description",
+        content:
+          "A warm, accessible component library for the web. Copy, paste, and ship faster with OnySnowapi.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@OnySnowapi" },
