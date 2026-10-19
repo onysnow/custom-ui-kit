@@ -58,6 +58,7 @@
     "@changesets/cli": "^2.29.7",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "^2.23.1",
+    "@playwright/test": "1.56.1",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.101.1",
     "@tanstack/react-router": "1.170.18",
@@ -105,7 +106,8 @@
     "test": "bun run --filter './packages/*' test",
     "changeset": "changeset",
     "release": "bun run build:packages && changeset publish",
-    "check:layers": "depcruise packages/fx/src --config .dependency-cruiser.cjs"
+    "check:layers": "depcruise packages/fx/src --config .dependency-cruiser.cjs",
+    "e2e": "playwright test"
   },
   "private": true,
   "description": "Onysnow component library monorepo; the root app is the gallery/demo (Lovable-connected)",

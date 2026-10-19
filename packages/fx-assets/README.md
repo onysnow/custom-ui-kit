@@ -11,3 +11,10 @@ the library where they are:
 import { configureFx } from "@onysnow/fx/core/config";
 configureFx({ assetBase: "https://cdn.example.com/fx" });
 ```
+
+## Licence
+
+Marked `UNLICENSED` until the provenance of each file is confirmed: the HDR room reflections, the glass and fracture
+photographs, the flare sprites and the sounds may have been photographed, rendered or licensed by different people.
+Do not publish this package to a public registry, or relicense it, before that is recorded here. The code packages'
+licence is the owner's choice and is not yet recorded either (there is no `LICENSE` file).
