@@ -1,0 +1,43 @@
+{
+  "name": "@onysnow/tokens",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onysnow/custom-ui-kit.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run --passWithNoTests"
+  },
+  "description": "Design tokens, themes and the theme runtime (contrast-checked, try-then-keep)",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./index.css": "./dist/index.css",
+    "./tailwind.css": "./dist/tailwind.css",
+    "./base.css": "./dist/base.css",
+    "./motion.css": "./dist/motion.css",
+    "./onysnow.css": "./dist/onysnow.css",
+    "./themes/*.css": "./dist/themes/*.css",
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {}
+}

@@ -15,11 +15,11 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@onysnow/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "@onysnow/ui/avatar";
+import { Badge } from "@onysnow/ui/badge";
+import { Button } from "@onysnow/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@onysnow/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -28,13 +28,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+} from "@onysnow/ui/dialog";
+import { Input } from "@onysnow/ui/input";
+import { Progress } from "@onysnow/ui/progress";
+import { Skeleton } from "@onysnow/ui/skeleton";
+import { Switch } from "@onysnow/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@onysnow/ui/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@onysnow/ui/tooltip";
 
 export const Route = createFileRoute("/")({
   head: () => ({

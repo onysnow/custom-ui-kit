@@ -1,0 +1,47 @@
+/* Maps the shadcn/Radix semantic variables onto the role tokens of whichever theme is active, so every
+   @onysnow/ui component follows the theme. Plain var() aliases: no colour conversion, one source of truth. */
+[data-theme] {
+  --background: var(--ground);
+  --foreground: var(--text);
+  --card: var(--surface-1);
+  --card-foreground: var(--text);
+  --popover: var(--surface-2);
+  --popover-foreground: var(--text);
+  --primary: var(--accent-1);
+  --primary-foreground: var(--ground);
+  --secondary: var(--surface-3);
+  --secondary-foreground: var(--text);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--surface-3);
+  --accent-foreground: var(--text);
+  --destructive: var(--flag-textbook-fill);
+  --destructive-foreground: var(--text);
+  --border: var(--surface-3);
+  --input: var(--line);
+  --ring: var(--accent-1);
+  color-scheme: dark;
+}
+
+/* Extra semantic variables the Tailwind mapping expects (sidebar, charts, the friendly accents). */
+[data-theme] {
+  --sidebar: var(--surface-1);
+  --sidebar-foreground: var(--text);
+  --sidebar-primary: var(--accent-1);
+  --sidebar-primary-foreground: var(--ground);
+  --sidebar-accent: var(--surface-3);
+  --sidebar-accent-foreground: var(--text);
+  --sidebar-border: var(--surface-3);
+  --sidebar-ring: var(--accent-1);
+  --chart-1: var(--accent-1);
+  --chart-2: var(--accent-2);
+  --chart-3: var(--status-supported);
+  --chart-4: var(--ai-mark);
+  --chart-5: var(--status-disputed);
+  --cream: var(--surface-2);
+  --cream-foreground: var(--text);
+  --peach: var(--surface-3);
+  --peach-foreground: var(--text);
+  --warm: var(--surface-1);
+  --warm-foreground: var(--text);
+}

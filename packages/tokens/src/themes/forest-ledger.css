@@ -1,0 +1,24 @@
+/* forest-ledger: every text and interface pair passed the WCAG contrast check (see checkPalette in @onysnow/tokens). */
+[data-theme="forest-ledger"] {
+  --ground: #0f272b;
+  --surface-1: #163338;
+  --surface-2: #1d3f45;
+  --surface-3: #264c53;
+  --text: #f4eedc;
+  --text-muted: #b4c2ba;
+  --line: #6e8e8c;
+  --accent-1: #d4b06a;
+  --accent-2: #b5c98a;
+  --status-supported: #8ec9e8;
+  --status-disputed: #f59078;
+  --status-unshown: #cfc6ae;
+  --flag-faint: #f2a7a0;
+  --flag-strong: #f78d62;
+  --flag-textbook-fill: #8a2420;
+  --flag-textbook-edge: #ff7b6b;
+  --ai-mark: #c4b4ea;
+  --font-ui: "Inter Variable", Inter, system-ui, sans-serif;
+  --font-read: "Newsreader Variable", Georgia, serif;
+  --font-display: "Newsreader Variable", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}

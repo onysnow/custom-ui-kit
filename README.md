@@ -1,4 +1,4 @@
-#  UI Kit
+# UI Kit
 
 A component library for web
 
@@ -23,36 +23,22 @@ npm i
 npm run dev
 ```
 
-## Using the library
+## Packages
 
-`@onysnow/custom-ui-kit` is a React + TypeScript component library (Radix UI, Tailwind CSS v4).
+| Package           | What it is                                                                  |
+| ----------------- | --------------------------------------------------------------------------- |
+| `@onysnow/tokens` | Themes, Tailwind v4 mapping, motion tokens, contrast checker, theme runtime |
+| `@onysnow/utils`  | `cn`, `useIsMobile`                                                         |
+| `@onysnow/ui`     | 46 accessible components (Radix + Tailwind v4)                              |
 
-```sh
-# from GitHub (until it is published to npm)
-npm i github:onysnow/custom-ui-kit#main
-# peers
-npm i react react-dom tailwindcss tw-animate-css
-```
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for structure, conventions, consuming and releasing.
 
-In your global CSS (Tailwind v4):
-
-```css
-@import "tailwindcss";
-@import "@onysnow/custom-ui-kit/theme.css";
-@source "../node_modules/@onysnow/custom-ui-kit/dist";
-```
-
-```tsx
-import { Button, Card, CardTitle } from "@onysnow/custom-ui-kit";
-```
-
-Add `dark` to `<html>` to switch to the dark theme.
-
-### Building the library
+## Development
 
 ```sh
-npm run build:lib   # -> dist/index.js, dist/*.d.ts, dist/theme.css
-npm run dev         # demo / gallery app
+bun install
+bun run dev              # gallery app
+bun run test             # all packages
+bun run build:packages   # dist/ for every package
+bun run changeset        # describe a change for release
 ```
-
-`dist/` is gitignored; installing from GitHub builds it automatically via the `prepare` script.

@@ -1,0 +1,24 @@
+/* archive: every text and interface pair passed the WCAG contrast check (see checkPalette in @onysnow/tokens). */
+[data-theme="archive"] {
+  --ground: #221a15;
+  --surface-1: #2c221b;
+  --surface-2: #3a2d24;
+  --surface-3: #54463a;
+  --text: #f3e7cf;
+  --text-muted: #c9b9a0;
+  --line: #8c7a66;
+  --accent-1: #d9945a;
+  --accent-2: #7cc0b4;
+  --status-supported: #b3d196;
+  --status-disputed: #f0806c;
+  --status-unshown: #cbbd93;
+  --flag-faint: #dca1a1;
+  --flag-strong: #f47e6c;
+  --flag-textbook-fill: #8b0000;
+  --flag-textbook-edge: #ff746c;
+  --ai-mark: #c9b2e6;
+  --font-ui: "Public Sans Variable", "Public Sans", system-ui, sans-serif;
+  --font-read: "Domine Variable", "Noto Serif Variable", Georgia, serif;
+  --font-display: "Domine Variable", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}

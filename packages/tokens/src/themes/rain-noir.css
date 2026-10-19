@@ -1,0 +1,24 @@
+/* rain-noir: every text and interface pair passed the WCAG contrast check (see checkPalette in @onysnow/tokens). */
+[data-theme="rain-noir"] {
+  --ground: #18120f;
+  --surface-1: #211a16;
+  --surface-2: #2a221e;
+  --surface-3: #342c27;
+  --text: #f0eae1;
+  --text-muted: #b9b0a3;
+  --line: #796f69;
+  --accent-1: #dd9231;
+  --accent-2: #3ab3ad;
+  --status-supported: #88d1a2;
+  --status-disputed: #f47c6b;
+  --status-unshown: #c5bcb0;
+  --flag-faint: #e8acab;
+  --flag-strong: #f57e4d;
+  --flag-textbook-fill: #831b16;
+  --flag-textbook-edge: #ff6557;
+  --ai-mark: #c3a6e0;
+  --font-ui: "Manrope Variable", "Work Sans Variable", system-ui, sans-serif;
+  --font-read: "Source Serif 4 Variable", Georgia, serif;
+  --font-display: "Jost Variable", "Manrope Variable", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}

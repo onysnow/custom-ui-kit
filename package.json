@@ -1,26 +1,7 @@
 {
-  "name": "@onysnow/custom-ui-kit",
-  "version": "0.1.0",
-  "description": "React + TypeScript component library built on Radix UI and Tailwind CSS v4",
-  "license": "MIT",
+  "name": "custom-ui-kit",
+  "version": "0.0.0",
   "type": "module",
-  "sideEffects": [
-    "**/*.css"
-  ],
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    },
-    "./theme.css": "./dist/theme.css"
-  },
   "overrides": {
     "rolldown": "1.2.1"
   },
@@ -65,7 +46,10 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "vaul": "^1.1.2",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@onysnow/tokens": "workspace:*",
+    "@onysnow/utils": "workspace:*",
+    "@onysnow/ui": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -97,19 +81,13 @@
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
     "vite-plugin-dts": "^4.5.4",
-    "vite-tsconfig-paths": "^6.0.2"
-  },
-  "peerDependencies": {
-    "react": "^18.2.0 || ^19.0.0",
-    "react-dom": "^18.2.0 || ^19.0.0",
-    "react-hook-form": "^7.50.0",
-    "tailwindcss": "^4.0.0",
-    "tw-animate-css": "^1.3.0"
-  },
-  "peerDependenciesMeta": {
-    "react-hook-form": {
-      "optional": true
-    }
+    "vite-tsconfig-paths": "^6.0.2",
+    "@changesets/cli": "^2.29.7",
+    "vitest": "^3.2.4",
+    "jsdom": "^26.1.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/user-event": "^14.6.1"
   },
   "scripts": {
     "dev": "vite dev",
@@ -118,8 +96,15 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build:lib": "vite build --config vite.lib.config.ts",
-    "typecheck": "tsc --noEmit -p .",
-    "prepare": "npm run build:lib"
-  }
+    "build:packages": "bun run --filter './packages/*' build",
+    "typecheck": "tsc --noEmit -p . && bun run --filter './packages/*' typecheck",
+    "test": "bun run --filter './packages/*' test",
+    "changeset": "changeset",
+    "release": "bun run build:packages && changeset publish"
+  },
+  "private": true,
+  "description": "Onysnow component library monorepo; the root app is the gallery/demo (Lovable-connected)",
+  "workspaces": [
+    "packages/*"
+  ]
 }
