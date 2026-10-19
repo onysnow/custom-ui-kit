@@ -1,4 +1,4 @@
-#  UI Kit
+# UI Kit
 
 A component library for web
 
@@ -21,4 +21,24 @@ git clone <this-repository-url>
 cd <repository-name>
 npm i
 npm run dev
+```
+
+## Packages
+
+| Package           | What it is                                                                  |
+| ----------------- | --------------------------------------------------------------------------- |
+| `@onysnow/tokens` | Themes, Tailwind v4 mapping, motion tokens, contrast checker, theme runtime |
+| `@onysnow/utils`  | `cn`, `useIsMobile`                                                         |
+| `@onysnow/ui`     | 46 accessible components (Radix + Tailwind v4)                              |
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for structure, conventions, consuming and releasing.
+
+## Development
+
+```sh
+bun install
+bun run dev              # gallery app
+bun run test             # all packages
+bun run build:packages   # dist/ for every package
+bun run changeset        # describe a change for release
 ```

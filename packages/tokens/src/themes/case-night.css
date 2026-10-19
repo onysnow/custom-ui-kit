@@ -1,0 +1,24 @@
+/* case-night: every text and interface pair passed the WCAG contrast check (see checkPalette in @onysnow/tokens). */
+[data-theme="case-night"] {
+  --ground: #14263a;
+  --surface-1: #1e3448;
+  --surface-2: #26425a;
+  --surface-3: #2e4d67;
+  --text: #f5ecda;
+  --text-muted: #c6bba5;
+  --line: #6f8aa3;
+  --accent-1: #e8a95b;
+  --accent-2: #7fb7e0;
+  --status-supported: #9cc5a1;
+  --status-disputed: #f39882;
+  --status-unshown: #cbc3b2;
+  --flag-faint: #e9afa8;
+  --flag-strong: #f6966a;
+  --flag-textbook-fill: #8e2420;
+  --flag-textbook-edge: #ff8070;
+  --ai-mark: #b7a6e0;
+  --font-ui: "IBM Plex Sans Variable", "IBM Plex Sans", system-ui, sans-serif;
+  --font-read: "Source Serif 4 Variable", "Source Serif 4", Georgia, serif;
+  --font-display: "IBM Plex Sans Variable", "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}

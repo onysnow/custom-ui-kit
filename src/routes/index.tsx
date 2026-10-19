@@ -1,563 +1,290 @@
-import { createFileRoute } from "@tanstack/react-router";
-import {
-  BookOpen,
-  Box,
-  Check,
-  Copy,
-  Info,
-  Layers,
-  Mail,
-  Palette,
-  Shield,
-  Snowflake,
-  Sparkles,
-  User,
-} from "lucide-react";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Droplets, Layers, Lightbulb, SwatchBook } from "lucide-react";
+import { useSyncExternalStore } from "react";
+import { Pane } from "@onysnow/fx/react/Pane";
+import { THEMES } from "@onysnow/tokens";
+import { Badge } from "@onysnow/ui/badge";
+import { Button } from "@onysnow/ui/button";
+import { Slider } from "@onysnow/ui/slider";
+import { Switch } from "@onysnow/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@onysnow/ui/tabs";
+import { InstallTabs } from "../docs/components/InstallTabs";
+import { EFFECTS } from "../docs/registry/effects";
+import { SITE } from "../docs/site";
+import { themes } from "../docs/theme";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+export const Route = createFileRoute("/")({ component: Landing });
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "OnySnowapi — Friendly Web Components" },
-      {
-        name: "description",
-        content:
-          "A warm, accessible component library for the web. Browse 12 ready-to-use components and start building faster.",
-      },
-      {
-        property: "og:title",
-        content: "OnySnowapi — Friendly Web Components",
-      },
-      {
-        property: "og:description",
-        content:
-          "A warm, accessible component library for the web. Browse 12 ready-to-use components and start building faster.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Index,
-});
-
-function Index() {
-  const [installCopied, setInstallCopied] = useState(false);
-
-  const handleCopyInstall = async () => {
-    await navigator.clipboard.writeText("npm install onysnowapi");
-    setInstallCopied(true);
-    setTimeout(() => setInstallCopied(false), 2000);
-  };
-
+function Landing() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <a href="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Snowflake className="h-5 w-5" />
-            </span>
-            OnySnowapi
-          </a>
-          <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            <a href="#gallery" className="text-muted-foreground hover:text-foreground transition-colors">
-              Components
-            </a>
-            <a href="#install" className="text-muted-foreground hover:text-foreground transition-colors">
-              Install
-            </a>
-          </nav>
-          <Button size="sm">Get started</Button>
-        </div>
-      </header>
+    <>
+      <Hero />
+      <Pillars />
+      <EffectsShowcase />
+      <ThemeStrip />
+      <Closing />
+    </>
+  );
+}
 
-      {/* Hero */}
-      <section className="relative overflow-hidden px-6 pt-16 pb-24 md:pt-24 md:pb-32">
-        <div className="gradient-mesh absolute inset-0 opacity-60" />
-        <div className="blob absolute -left-20 top-20 h-72 w-72 bg-secondary/40 blur-3xl" />
-        <div className="blob absolute -right-20 bottom-10 h-80 w-80 bg-primary/20 blur-3xl" />
-
-        <div className="relative mx-auto max-w-4xl text-center">
-          <Badge variant="secondary" className="mb-6 px-3 py-1 text-sm">
-            <Sparkles className="mr-1 h-3.5 w-3.5" />
-            12 starter components
+function Hero() {
+  return (
+    <section data-photo className="relative isolate px-5 pb-24 pt-20 sm:px-8 lg:pt-28">
+      <div className="mx-auto grid w-full max-w-screen-xl grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+        <div>
+          <Badge
+            variant="outline"
+            className="mb-6 border-border/80 bg-card/40 font-mono text-[11px] tracking-wider"
+          >
+            React 19 · Radix · Tailwind v4 · WebGL
           </Badge>
-          <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl lg:text-7xl">
-            Components that feel{" "}
-            <span className="text-primary">warm & alive</span>
+          <h1 className="font-display text-5xl font-light leading-[1.04] tracking-tight sm:text-7xl">
+            Components with <span className="text-primary">real light</span>.
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-            OnySnowapi is a friendly web component library designed for fast,
-            accessible interfaces. Copy, paste, and ship with confidence.
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
+            {SITE.description}
           </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button size="lg" className="gap-2">
-              <Box className="h-4 w-4" />
-              Browse components
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Button asChild size="lg" className="plastic">
+              <Link to="/docs/installation">
+                Get started <ArrowRight className="size-4" />
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" className="gap-2">
-              <BookOpen className="h-4 w-4" />
-              Read the docs
+            <Button asChild size="lg" variant="outline" className="border-border bg-card/40">
+              <Link to="/docs/components">Browse components</Link>
             </Button>
           </div>
+          <InstallTabs className="mt-10 max-w-xl" />
         </div>
-      </section>
+        <HeroPane />
+      </div>
+    </section>
+  );
+}
 
-      {/* Value props */}
-      <section className="px-6 py-16">
-        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
-          <Card className="border-none bg-cream/60 shadow-sm">
-            <CardHeader>
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Palette className="h-5 w-5" />
-              </div>
-              <CardTitle>Warm by default</CardTitle>
-              <CardDescription>
-                Creamy backgrounds, soft orange accents, and inviting contrast
-                that feels human.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-          <Card className="border-none bg-cream/60 shadow-sm">
-            <CardHeader>
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Shield className="h-5 w-5" />
-              </div>
-              <CardTitle>Accessible</CardTitle>
-              <CardDescription>
-                Built on Radix primitives with keyboard navigation, focus rings,
-                and ARIA roles.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-          <Card className="border-none bg-cream/60 shadow-sm">
-            <CardHeader>
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Layers className="h-5 w-5" />
-              </div>
-              <CardTitle>Composable</CardTitle>
-              <CardDescription>
-                Small, focused pieces you can mix, match, and extend without
-                fighting the styles.
-              </CardDescription>
-            </CardHeader>
-          </Card>
+/** Real components on a real pane: the glass bends the scene behind it, and the controls are the library's own. */
+function HeroPane() {
+  return (
+    <Pane material="frosted-float" thickness={20} edge={{ width: 28 }} gap={60}>
+      <div className="space-y-6 p-7 sm:p-9">
+        <div className="flex items-center justify-between">
+          <p className="font-display text-2xl font-light">Studio settings</p>
+          <Badge>Live</Badge>
         </div>
-      </section>
-
-      {/* Component gallery */}
-      <section id="gallery" className="px-6 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Meet the library
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              Twelve starter components, ready to drop into your next project.
-            </p>
+        <Tabs defaultValue="light">
+          <TabsList className="w-full">
+            <TabsTrigger value="light" className="flex-1">
+              Light
+            </TabsTrigger>
+            <TabsTrigger value="glass" className="flex-1">
+              Glass
+            </TabsTrigger>
+            <TabsTrigger value="rain" className="flex-1">
+              Rain
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="light" className="space-y-5 pt-5">
+            <Field label="Lamp height">
+              <Slider defaultValue={[64]} max={100} />
+            </Field>
+            <Field label="Room reflection">
+              <Slider defaultValue={[38]} max={100} />
+            </Field>
+          </TabsContent>
+          <TabsContent value="glass" className="space-y-5 pt-5">
+            <Field label="Thickness">
+              <Slider defaultValue={[18]} max={40} />
+            </Field>
+            <Field label="Frost">
+              <Slider defaultValue={[55]} max={100} />
+            </Field>
+          </TabsContent>
+          <TabsContent value="rain" className="space-y-5 pt-5">
+            <Field label="Drop density">
+              <Slider defaultValue={[30]} max={100} />
+            </Field>
+            <Field label="Wind">
+              <Slider defaultValue={[12]} max={100} />
+            </Field>
+          </TabsContent>
+        </Tabs>
+        <div className="flex items-center justify-between rounded-xl border border-border/60 bg-background/30 px-4 py-3">
+          <div>
+            <p className="text-sm font-medium">Cast shadows</p>
+            <p className="text-xs text-muted-foreground">Every surface throws one.</p>
           </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Button */}
-            <GalleryCard
-              title="Button"
-              description="Solid, outline, ghost, and destructive variants in multiple sizes."
-              snippet={`<Button>Click me</Button>
-<Button variant="outline">Cancel</Button>`}
-            >
-              <div className="flex flex-wrap gap-2">
-                <Button size="sm">Primary</Button>
-                <Button size="sm" variant="outline">
-                  Outline
-                </Button>
-                <Button size="sm" variant="ghost">
-                  Ghost
-                </Button>
-              </div>
-            </GalleryCard>
-
-            {/* Card */}
-            <GalleryCard
-              title="Card"
-              description="A flexible container with header, content, and footer slots."
-              snippet={`<Card>
-  <CardHeader>
-    <CardTitle>Hello</CardTitle>
-  </CardHeader>
-  <CardContent>Content</CardContent>
-</Card>`}
-            >
-              <Card className="w-full max-w-[220px]">
-                <CardHeader className="p-4 pb-2">
-                  <CardTitle className="text-base">Cozy card</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 pt-0 text-sm text-muted-foreground">
-                  Cards group related content.
-                </CardContent>
-              </Card>
-            </GalleryCard>
-
-            {/* Badge */}
-            <GalleryCard
-              title="Badge"
-              description="Small status labels with default, secondary, and outline styles."
-              snippet={`<Badge>New</Badge>
-<Badge variant="secondary">Draft</Badge>`}
-            >
-              <div className="flex flex-wrap gap-2">
-                <Badge>New</Badge>
-                <Badge variant="secondary">Beta</Badge>
-                <Badge variant="outline">Public</Badge>
-              </div>
-            </GalleryCard>
-
-            {/* Input */}
-            <GalleryCard
-              title="Input"
-              description="Styled text inputs with focus rings and disabled states."
-              snippet={`<Input placeholder="Email address" />
-<Input disabled value="Locked" />`}
-            >
-              <div className="flex w-full flex-col gap-2">
-                <Input placeholder="Type something nice…" />
-                <Input disabled value="Disabled input" />
-              </div>
-            </GalleryCard>
-
-            {/* Alert */}
-            <GalleryCard
-              title="Alert"
-              description="Call attention to messages with default and destructive variants."
-              snippet={`<Alert>
-  <Info className="h-4 w-4" />
-  <AlertTitle>Heads up</AlertTitle>
-  <AlertDescription>Something happened.</AlertDescription>
-</Alert>`}
-            >
-              <Alert className="pl-10">
-                <Info className="top-3.5 left-3.5 h-4 w-4" />
-                <AlertTitle>Heads up</AlertTitle>
-                <AlertDescription>
-                  This is a friendly alert message.
-                </AlertDescription>
-              </Alert>
-            </GalleryCard>
-
-            {/* Avatar */}
-            <GalleryCard
-              title="Avatar"
-              description="User images with graceful initials fallbacks."
-              snippet={`<Avatar>
-  <AvatarImage src="/avatar.jpg" />
-  <AvatarFallback>JD</AvatarFallback>
-</Avatar>`}
-            >
-              <div className="flex gap-3">
-                <Avatar>
-                  <AvatarImage src="https://i.pravatar.cc/150?img=32" alt="User" />
-                  <AvatarFallback>JD</AvatarFallback>
-                </Avatar>
-                <Avatar>
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    OS
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-            </GalleryCard>
-
-            {/* Switch */}
-            <GalleryCard
-              title="Switch"
-              description="A clean toggle control for binary settings."
-              snippet={`<Switch id="airplane" />
-<Switch id="wifi" defaultChecked />`}
-            >
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Switch id="wifi" defaultChecked />
-                  <label htmlFor="wifi" className="text-sm">
-                    Wi-Fi
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch id="bluetooth" />
-                  <label htmlFor="bluetooth" className="text-sm">
-                    Bluetooth
-                  </label>
-                </div>
-              </div>
-            </GalleryCard>
-
-            {/* Tooltip */}
-            <GalleryCard
-              title="Tooltip"
-              description="Contextual hints that appear on hover or focus."
-              snippet={`<TooltipProvider>
-  <Tooltip>
-    <TooltipTrigger>Hover me</TooltipTrigger>
-    <TooltipContent>Hello there!</TooltipContent>
-  </Tooltip>
-</TooltipProvider>`}
-            >
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button size="sm" variant="outline">
-                      Hover me
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Thanks for stopping by!</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </GalleryCard>
-
-            {/* Progress */}
-            <GalleryCard
-              title="Progress"
-              description="Visual indicator for completion or loading states."
-              snippet={`<Progress value={60} />`}
-            >
-              <div className="w-full space-y-3">
-                <Progress value={75} />
-                <Progress value={35} />
-              </div>
-            </GalleryCard>
-
-            {/* Skeleton */}
-            <GalleryCard
-              title="Skeleton"
-              description="Placeholder loading shapes that reduce perceived wait time."
-              snippet={`<Skeleton className="h-4 w-[250px]" />
-<Skeleton className="h-10 w-10 rounded-full" />`}
-            >
-              <div className="w-full space-y-3">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-4/5" />
-                <div className="flex items-center gap-3">
-                  <Skeleton className="h-10 w-10 rounded-full" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-3 w-24" />
-                    <Skeleton className="h-3 w-16" />
-                  </div>
-                </div>
-              </div>
-            </GalleryCard>
-
-            {/* Tabs */}
-            <GalleryCard
-              title="Tabs"
-              description="Organize content into switchable panels."
-              snippet={`<Tabs defaultValue="design">
-  <TabsList>
-    <TabsTrigger value="design">Design</TabsTrigger>
-    <TabsTrigger value="code">Code</TabsTrigger>
-  </TabsList>
-</Tabs>`}
-            >
-              <Tabs defaultValue="design" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="design">Design</TabsTrigger>
-                  <TabsTrigger value="code">Code</TabsTrigger>
-                </TabsList>
-                <TabsContent value="design" className="text-sm text-muted-foreground">
-                  Design view content.
-                </TabsContent>
-                <TabsContent value="code" className="text-sm text-muted-foreground">
-                  Code view content.
-                </TabsContent>
-              </Tabs>
-            </GalleryCard>
-
-            {/* Dialog */}
-            <GalleryCard
-              title="Dialog"
-              description="Accessible modal windows for confirmations and forms."
-              snippet={`<Dialog>
-  <DialogTrigger>Open</DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Confirm</DialogTitle>
-    </DialogHeader>
-  </DialogContent>
-</Dialog>`}
-            >
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="sm" variant="outline">
-                    Open dialog
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Hello from OnySnowapi</DialogTitle>
-                    <DialogDescription>
-                      This dialog is keyboard accessible and focus trapped.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <Button type="submit">Got it</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </GalleryCard>
-          </div>
+          <Switch defaultChecked aria-label="Cast shadows" />
         </div>
-      </section>
+      </div>
+    </Pane>
+  );
+}
 
-      {/* Install */}
-      <section id="install" className="px-6 py-16">
-        <div className="mx-auto max-w-3xl">
-          <Card className="overflow-hidden border-none bg-gradient-to-br from-peach/40 to-cream/60 shadow-sm">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Ready to build?</CardTitle>
-              <CardDescription>
-                Install OnySnowapi and start using the components in minutes.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-background/80 px-4 py-3 font-mono text-sm shadow-sm">
-                <span className="text-muted-foreground">$</span>
-                <span className="flex-1">npm install onysnowapi</span>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="h-8 w-8"
-                  onClick={handleCopyInstall}
-                  aria-label="Copy install command"
-                >
-                  {installCopied ? (
-                    <Check className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border/50 px-6 py-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 md:flex-row">
-          <a href="/" className="flex items-center gap-2 font-bold tracking-tight">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Snowflake className="h-4 w-4" />
-            </span>
-            OnySnowapi
-          </a>
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} OnySnowapi. Built for friendly interfaces.
-          </p>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <a href="#gallery" className="hover:text-foreground transition-colors">
-              Components
-            </a>
-            <a href="mailto:hello@onysnowapi.dev" className="flex items-center gap-1 hover:text-foreground transition-colors">
-              <Mail className="h-3.5 w-3.5" />
-              Contact
-            </a>
-          </div>
-        </div>
-      </footer>
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-muted-foreground">{label}</p>
+      {children}
     </div>
   );
 }
 
-function GalleryCard({
-  title,
-  description,
-  snippet,
-  children,
-}: {
-  title: string;
-  description: string;
-  snippet: string;
-  children: React.ReactNode;
-}) {
-  const [copied, setCopied] = useState(false);
+const PILLARS = [
+  {
+    icon: Layers,
+    title: "46 accessible components",
+    body: "Radix primitives and Tailwind v4, one folder per component, each its own import. Copy nothing: install, import, theme.",
+    to: "/docs/components",
+    cta: "Browse components",
+  },
+  {
+    icon: Lightbulb,
+    title: "One scene, shared light",
+    body: "Glass, plastic, photographs and type all read the same lamp and room. A shadow cast by one surface lands on the next.",
+    to: "/docs/effects",
+    cta: "See the effects",
+  },
+  {
+    icon: SwatchBook,
+    title: "Themes that prove themselves",
+    body: "Every built-in palette passes WCAG contrast, and a theme of your own is refused if it fails. Try, then keep.",
+    to: "/docs/theming",
+    cta: "Theming guide",
+  },
+] as const;
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(snippet);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
+function Pillars() {
   return (
-    <Card className="flex flex-col overflow-hidden border-none bg-card shadow-sm transition-shadow hover:shadow-md">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
-          {title === "Card" && <CardIcon />}
-          {title}
-        </CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-1 flex-col gap-4">
-        <div className="flex min-h-[120px] flex-1 items-center justify-center rounded-xl bg-cream/60 p-4">
-          {children}
-        </div>
-        <div className="relative">
-          <pre className="overflow-x-auto rounded-lg bg-muted p-3 text-xs font-mono text-muted-foreground">
-            <code>{snippet}</code>
-          </pre>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute top-2 right-2 h-7 w-7"
-            onClick={handleCopy}
-            aria-label={`Copy ${title} snippet`}
-          >
-            {copied ? (
-              <Check className="h-3.5 w-3.5 text-green-600" />
-            ) : (
-              <Copy className="h-3.5 w-3.5" />
-            )}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+    <section className="px-5 py-16 sm:px-8">
+      <div className="mx-auto grid max-w-screen-xl gap-5 md:grid-cols-3">
+        {PILLARS.map((p) => (
+          <Pane key={p.title}>
+            <div className="flex h-full flex-col gap-4 p-7">
+              <p.icon className="size-6 text-primary" aria-hidden />
+              <h2 className="font-display text-2xl font-light">{p.title}</h2>
+              <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{p.body}</p>
+              <Link
+                to={p.to}
+                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+              >
+                {p.cta} <ArrowRight className="size-3.5" />
+              </Link>
+            </div>
+          </Pane>
+        ))}
+      </div>
+    </section>
   );
 }
 
-function CardIcon() {
+function EffectsShowcase() {
   return (
-    <span className="flex h-5 w-5 items-center justify-center rounded bg-primary/10 text-[10px] font-bold text-primary">
-      C
-    </span>
+    <section className="px-5 py-16 sm:px-8">
+      <div className="mx-auto max-w-screen-xl">
+        <div className="mb-10 flex items-end justify-between gap-6">
+          <div>
+            <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              Effects
+            </p>
+            <h2 className="font-display text-4xl font-light sm:text-5xl">
+              Light you can build with.
+            </h2>
+          </div>
+          <Link to="/docs/effects" className="hidden text-sm text-primary hover:underline sm:block">
+            All effects →
+          </Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {EFFECTS.map((e) => (
+            <Link
+              key={e.slug}
+              to="/docs/effects/$slug"
+              params={{ slug: e.slug }}
+              className="group block"
+            >
+              <Pane className="h-full transition-transform duration-500 group-hover:-translate-y-1">
+                <div className="space-y-3 p-6">
+                  <div className="flex items-center gap-2">
+                    <Droplets className="size-4 text-secondary-foreground/70" aria-hidden />
+                    <h3 className="font-display text-xl font-light">{e.title}</h3>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{e.description}</p>
+                  <p className="font-mono text-xs text-muted-foreground/80">
+                    {e.exports.join(" · ")}
+                  </p>
+                </div>
+              </Pane>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const subscribe = (fn: () => void) => themes.onAppearanceChange(fn);
+const current = () => themes.currentAppearance().theme;
+
+function ThemeStrip() {
+  const active = useSyncExternalStore(subscribe, current, () => "rain-noir");
+  return (
+    <section className="px-5 py-16 sm:px-8">
+      <div className="mx-auto max-w-screen-xl">
+        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          Themes
+        </p>
+        <h2 className="mb-3 font-display text-4xl font-light sm:text-5xl">Five rooms. Try one.</h2>
+        <p className="mb-10 max-w-2xl text-muted-foreground">
+          Pick a theme and the whole site follows, components and effects together. Each passes WCAG
+          contrast; the lowest pair is shown on its card.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => themes.keepAppearance({ theme: t.id })}
+              aria-pressed={active === t.id}
+              className="surface-read rounded-2xl border border-border p-5 text-left transition hover:-translate-y-1 aria-pressed:border-primary aria-pressed:ring-1 aria-pressed:ring-primary"
+            >
+              <div className="mb-4 flex h-12 overflow-hidden rounded-lg border border-black/30">
+                {t.swatches.map((c) => (
+                  <span key={c} className="flex-1" style={{ background: c }} />
+                ))}
+              </div>
+              <p className="font-display text-lg font-light">{t.name}</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t.mood}</p>
+              <p className="mt-3 font-mono text-[11px] text-muted-foreground">
+                Contrast {t.lowestContrast}
+              </p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Closing() {
+  return (
+    <section className="px-5 pb-28 pt-12 sm:px-8">
+      <Pane className="mx-auto max-w-screen-lg">
+        <div className="space-y-6 px-8 py-14 text-center sm:px-16">
+          <h2 className="font-display text-4xl font-light sm:text-5xl">Start in five minutes.</h2>
+          <p className="mx-auto max-w-xl text-muted-foreground">
+            Install the packages, import one stylesheet, set a theme. Add effects when you want the
+            room to feel real.
+          </p>
+          <div className="flex justify-center gap-3">
+            <Button asChild size="lg" className="plastic">
+              <Link to="/docs/installation">Installation guide</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-border bg-card/40">
+              <a href={SITE.repo}>GitHub</a>
+            </Button>
+          </div>
+        </div>
+      </Pane>
+    </section>
   );
 }

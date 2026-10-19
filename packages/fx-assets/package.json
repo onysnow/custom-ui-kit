@@ -1,0 +1,22 @@
+{
+  "name": "@onysnow/fx-assets",
+  "version": "0.1.0",
+  "description": "Textures, HDR rooms, fracture library, flare sprites and sounds used by @onysnow/fx",
+  "license": "UNLICENSED",
+  "type": "module",
+  "files": [
+    "assets"
+  ],
+  "exports": {
+    "./assets/*": "./assets/*",
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onysnow/custom-ui-kit.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  }
+}

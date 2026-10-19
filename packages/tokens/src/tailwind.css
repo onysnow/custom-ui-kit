@@ -1,0 +1,93 @@
+/* Tailwind v4 theme mapping: utilities such as bg-primary, text-muted-foreground and border-border follow the active theme.
+   Import after `@import "tailwindcss"`. */
+@custom-variant dark (&:is(.dark *, [data-theme] *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* OnySnowapi semantic tokens */
+  --color-cream: var(--cream);
+  --color-cream-foreground: var(--cream-foreground);
+  --color-peach: var(--peach);
+  --color-peach-foreground: var(--peach-foreground);
+  --color-warm: var(--warm);
+  --color-warm-foreground: var(--warm-foreground);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}
+
+@utility blob {
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+}
+
+@utility gradient-mesh {
+  background-image:
+    radial-gradient(
+      at 0% 0%,
+      color-mix(in oklab, var(--color-primary) 25%, transparent) 0px,
+      transparent 50%
+    ),
+    radial-gradient(
+      at 100% 0%,
+      color-mix(in oklab, var(--color-secondary) 30%, transparent) 0px,
+      transparent 50%
+    ),
+    radial-gradient(
+      at 100% 100%,
+      color-mix(in oklab, var(--color-accent) 25%, transparent) 0px,
+      transparent 50%
+    ),
+    radial-gradient(
+      at 0% 100%,
+      color-mix(in oklab, var(--color-cream) 60%, transparent) 0px,
+      transparent 50%
+    );
+}

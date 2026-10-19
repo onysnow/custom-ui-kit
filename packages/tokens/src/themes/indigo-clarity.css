@@ -1,0 +1,24 @@
+/* indigo-clarity: every text and interface pair passed the WCAG contrast check (see checkPalette in @onysnow/tokens). */
+[data-theme="indigo-clarity"] {
+  --ground: #121233;
+  --surface-1: #1b1b45;
+  --surface-2: #272757;
+  --surface-3: #33336a;
+  --text: #fbf6ea;
+  --text-muted: #d2d2e6;
+  --line: #9a9ac4;
+  --accent-1: #ffd166;
+  --accent-2: #a6d4ff;
+  --status-supported: #94e6ae;
+  --status-disputed: #ffa08f;
+  --status-unshown: #e2dccb;
+  --flag-faint: #f8c0c6;
+  --flag-strong: #ff9466;
+  --flag-textbook-fill: #a0182a;
+  --flag-textbook-edge: #ff9090;
+  --ai-mark: #d3c6f5;
+  --font-ui: "Inclusive Sans", "Inter Variable", system-ui, sans-serif;
+  --font-read: "Lexend Variable", "Inter Variable", sans-serif;
+  --font-display: "Lexend Variable", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}

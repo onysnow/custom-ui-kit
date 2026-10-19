@@ -6,3 +6,6 @@ pnpm-lock.yaml
 package-lock.json
 bun.lock
 routeTree.gen.ts
+packages/fx/src/styles/effects.css
+packages/fx/src/optics/liquidglass
+packages/fx-assets
