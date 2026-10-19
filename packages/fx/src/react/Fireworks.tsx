@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { previewing } from "../engine/preview";
+import { effectsEnabled } from "../engine/quality";
 import { addEmitter, emitterChanged, makeEmitter, type Emitter } from "../light/lights";
 import { blackbodyRgb } from "../light/blackbody";
 import {
@@ -63,6 +64,7 @@ type Burst = { emitter: Emitter; remove: () => void; age: number; stars: Star[] 
 export function Fireworks() {
   useEffect(() => {
     if (!previewing("fireworks")) return;
+    if (!effectsEnabled()) return;
     const canvas = document.createElement("canvas");
     canvas.className = "fireworks-layer";
     canvas.setAttribute("aria-hidden", "true");

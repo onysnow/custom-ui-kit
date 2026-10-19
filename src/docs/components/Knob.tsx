@@ -1,6 +1,6 @@
 import { RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
-import { applyTuning, tuning } from "@onysnow/fx/core/tuning";
+import { applyTuning, TUNING_DEFAULTS, tuning } from "@onysnow/fx/core/tuning";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@onysnow/ui/select";
 import { Slider } from "@onysnow/ui/slider";
 
@@ -11,11 +11,20 @@ import { Slider } from "@onysnow/ui/slider";
 export function Knob({ k }: { k: string }) {
   const knob = tuning[k];
   const [value, setValue] = useState(knob?.value ?? 0);
-  const [initial] = useState(knob?.value ?? 0);
+  // The source's value, not whatever an earlier visit left behind.
+  const initial = TUNING_DEFAULTS[k] ?? knob?.value ?? 0;
   useEffect(() => {
     if (knob) knob.value = value;
     applyTuning();
   }, [knob, value]);
+  // A demo's tweak belongs to the demo: put the knob back when it unmounts.
+  useEffect(
+    () => () => {
+      if (knob) knob.value = initial;
+      applyTuning();
+    },
+    [knob, initial],
+  );
   if (!knob) return null;
   const id = `knob-${k}`;
   return (

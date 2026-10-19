@@ -37,6 +37,7 @@ import { PART_DEPTH } from "../optics/crack-field";
 import { onTuningApplied, t as knob } from "../core/tuning";
 import { camera } from "../camera/camera";
 import { previewing } from "../engine/preview";
+import { effectsEnabled } from "../engine/quality";
 import { adoptLayer } from "../engine/compositor";
 import { clearShardMap, paintShardMap, setShardMap } from "../optics/shard-map";
 
@@ -223,7 +224,7 @@ export function BrokenGlass({
   useEffect(() => {
     const canvas = view.current;
     const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
+    if (!canvas || !ctx || !effectsEnabled()) return;
     /*
      * The break: from a photograph of broken glass of this kind when there is
      * one (lib/crack-photos) -- its cracks ARE the cracks, and the shards are

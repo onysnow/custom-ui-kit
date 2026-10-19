@@ -14,7 +14,7 @@
  */
 
 /** What can be tried, and what each one is. */
-import { experimentsAllowed, getFxConfig } from "../core/config";
+import { experimentsAllowed, getFxConfig, notePreviewsRead } from "../core/config";
 
 export const PREVIEWS = {
   /** Scratches and smudges block and scatter in proportion to each pixel's opacity. */
@@ -112,6 +112,9 @@ export const ON_BY_DEFAULT: readonly PreviewName[] = [
   "liquidlights",
   "liquidedge",
   "redroom",
+  // Quality tiers: phones and reduced motion get the quiet set, weak devices the lite one. A library that runs
+  // simulations and a frame loop must be able to stand down, so this is not opt-in.
+  "quality",
 ];
 
 let active: ReadonlySet<string> | null = null;
@@ -122,6 +125,7 @@ function read(): ReadonlySet<string> {
   let list: string[] = [];
   // Only for Ony signed in as the admin (item 48; lib/admin-gate).
   const configured = getFxConfig().previews;
+  notePreviewsRead();
   if (!experimentsAllowed()) {
     active = new Set([...ON_BY_DEFAULT, ...configured]);
     document.documentElement.dataset["try"] = [...active].join(" ");

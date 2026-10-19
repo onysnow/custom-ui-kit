@@ -64,6 +64,15 @@ function mark(q: Quality) {
   if (typeof document !== "undefined") document.documentElement.dataset["quality"] = q;
 }
 
+/**
+ * Whether the page may run effects that animate or simulate (rain, balloons, webs, fireworks, cracking glass, the
+ * plastic bevel): false at the "minimal" tier, which is what phones and visitors who ask for reduced motion get.
+ * The static layers (CSS glass) are unaffected. This is what keeps the effects from being load-bearing.
+ */
+export function effectsEnabled(): boolean {
+  return quality() !== "minimal";
+}
+
 /** The tier this page runs at. */
 export function quality(): Quality {
   if (tier) return tier;

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { previewing } from "../engine/preview";
+import { effectsEnabled } from "../engine/quality";
 import { addTask, ORDER } from "../engine/scheduler";
 import { beginPass, buildProgram, endPass, sharedGl } from "../engine/gl";
 import { pointLights, pointer, roomLight, type Light } from "../light/lights";
@@ -76,6 +77,7 @@ type Shred = {
 export function Balloons() {
   useEffect(() => {
     if (!previewing("balloons")) return;
+    if (!effectsEnabled()) return;
     const s = sharedGl();
     if (!s) return;
     const { gl, canvas: buffer } = s;

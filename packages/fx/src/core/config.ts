@@ -41,6 +41,12 @@ export function isLocalDev(
   return dev && (host === "localhost" || host === "127.0.0.1" || host === "[::1]");
 }
 
+let previewsRead = false;
+/** Called by the preview reader the first time it caches the list; later `previews` changes cannot apply. */
+export function notePreviewsRead(): void {
+  previewsRead = true;
+}
+
 const defaults: FxConfig = {
   experimentsAllowed: () => typeof window !== "undefined" && isLocalDev(),
   assetBase: "",
@@ -51,6 +57,12 @@ let current: FxConfig = { ...defaults };
 
 /** Override any part of the configuration. Call once, before the first effect mounts. */
 export function configureFx(patch: Partial<FxConfig>): FxConfig {
+  if (previewsRead && patch.previews !== undefined && import.meta.env?.DEV) {
+    console.warn(
+      "[@onysnow/fx] configureFx({ previews }) was called after an effect had already read the preview list, so it " +
+        "has no effect. Call configureFx once, before the first effect mounts.",
+    );
+  }
   current = { ...current, ...patch };
   return current;
 }
@@ -61,6 +73,7 @@ export function getFxConfig(): Readonly<FxConfig> {
 
 export function resetFxConfig(): void {
   current = { ...defaults };
+  previewsRead = false;
 }
 
 /** Whether this page may show previews and test switches. */

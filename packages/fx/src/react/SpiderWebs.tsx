@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { previewing } from "../engine/preview";
+import { effectsEnabled } from "../engine/quality";
 import { addTask, ORDER } from "../engine/scheduler";
 import { pointLights, pointer } from "../light/lights";
 import { camera } from "../camera/camera";
@@ -34,6 +35,7 @@ const WEB_DEPTH = 30;
 export function SpiderWebs() {
   useEffect(() => {
     if (!previewing("webs")) return;
+    if (!effectsEnabled()) return;
     const host =
       document.querySelector<HTMLElement>("main h1")?.closest<HTMLElement>("section") ??
       document.querySelector<HTMLElement>("main > *");

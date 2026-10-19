@@ -299,12 +299,13 @@ export function createThemeStore<T extends string>(options: ThemeStoreOptions<T>
    * Runs before the first paint (inline in <head>), so a kept theme never flashes the default. Self-contained: it
    * re-applies a theme of your own from the variables stored with it, accepting only values that look like colours.
    */
+  const q = (v: string) => JSON.stringify(v);
   const bootScript =
-    `(function(){try{var a=JSON.parse(localStorage.getItem('${KEY}')||'{}');var t=sessionStorage.getItem('${TRY_KEY}');` +
+    `(function(){try{var a=JSON.parse(localStorage.getItem(${q(KEY)})||'{}');var t=sessionStorage.getItem(${q(TRY_KEY)});` +
     `var h=document.documentElement;var own=t&&t.indexOf('own:')===0?t.slice(4):(t?null:a.custom);` +
-    `h.dataset.theme=(t&&!own?t:a.theme)||'${options.defaultTheme}';h.dataset.effects=a.effects||'full';` +
+    `h.dataset.theme=(t&&!own?t:a.theme)||${q(options.defaultTheme)};h.dataset.effects=a.effects||'full';` +
     `h.dataset.motion=a.motion||'normal';h.dataset.fxOff=(a.off||${JSON.stringify(offAtFirst)}).join(' ');` +
-    `if(own){var l=JSON.parse(localStorage.getItem('${CUSTOM_KEY}')||'[]');for(var i=0;i<l.length;i++){` +
+    `if(own){var l=JSON.parse(localStorage.getItem(${q(CUSTOM_KEY)})||'[]');for(var i=0;i<l.length;i++){` +
     `if(l[i]&&l[i].id===own&&l[i].vars){h.dataset.theme=l[i].base;for(var k in l[i].vars){var v=String(l[i].vars[k]);` +
     `if(/^--[a-z0-9-]+$/.test(k)&&/^[#0-9a-fA-F% .]+$/.test(v))h.style.setProperty(k,v);}}}}}catch(e){}})();`;
 

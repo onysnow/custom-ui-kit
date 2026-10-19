@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { effectsEnabled } from "../engine/quality";
 import { addTask, ORDER } from "../engine/scheduler";
 import { beginPass, buildProgram, endPass, sharedGl } from "../engine/gl";
 import { pointLights } from "../light/lights";
@@ -129,6 +130,7 @@ void main() {
 
 export function PlasticBevel() {
   useEffect(() => {
+    if (!effectsEnabled()) return;
     const s = sharedGl();
     if (!s) return;
     const { gl, canvas: buffer } = s;
