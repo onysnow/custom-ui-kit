@@ -45,3 +45,6 @@ export * from "./toggle-group";
 export * from "./toggle";
 export * from "./tooltip";
 export * from "./layout";
+export * from "./status";
+export * from "./error-boundary";
+export * from "./chart-frame";

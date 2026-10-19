@@ -146,6 +146,26 @@ export const COMPONENTS: ComponentEntry[] = [
     radix: "separator",
   },
   {
+    slug: "status",
+    title: "Status",
+    group: "Feedback",
+    description:
+      "Status, flag level and AI-draft chips that always show a shape and a word as well as a colour (WCAG 1.4.1).",
+  },
+  {
+    slug: "error-boundary",
+    title: "Error boundary",
+    group: "Feedback",
+    description: "One panel's crash shows an error in that panel instead of blanking the page.",
+  },
+  {
+    slug: "chart-frame",
+    title: "Chart frame",
+    group: "Data display",
+    description:
+      "The common anatomy for every chart: title, question, rule, tools, key and footer, as one labelled figure.",
+  },
+  {
     slug: "skeleton",
     title: "Skeleton",
     group: "Feedback",

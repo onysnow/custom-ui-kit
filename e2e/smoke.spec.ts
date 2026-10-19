@@ -22,6 +22,9 @@ const ROUTES = [
   "/docs/components/button",
   "/docs/components/dialog",
   "/docs/components/resizable",
+  "/docs/components/status",
+  "/docs/components/error-boundary",
+  "/docs/components/chart-frame",
   "/docs/effects",
   "/docs/effects/glass",
   "/docs/effects/light",
@@ -44,7 +47,10 @@ for (const route of ROUTES) {
   test(`${route} renders without errors or hydration warnings`, async ({ page }) => {
     const problems = watch(page);
     await page.goto(route, { waitUntil: "load" });
-    await expect(page.locator("h1, [data-slot], main").first()).toBeVisible();
+    // A 404 also renders a <main>, so require a real heading and reject the not-found page.
+    const heading = page.locator("h1").first();
+    await expect(heading).toBeVisible();
+    await expect(heading).not.toHaveText("404");
     await page.waitForTimeout(2500);
     expect(problems).toEqual([]);
   });
