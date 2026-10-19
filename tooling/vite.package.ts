@@ -12,7 +12,12 @@ type PackageJson = {
   peerDependencies?: Record<string, string>;
 };
 
-export function packageConfig(packageDir: string) {
+type Options = {
+  /** "folders": one entry per `src/<name>/index.ts` (default). "modules": one entry per source module. */
+  entries?: "folders" | "modules";
+};
+
+export function packageConfig(packageDir: string, options: Options = {}) {
   const pkg = JSON.parse(readFileSync(join(packageDir, "package.json"), "utf-8")) as PackageJson;
   const externals = [
     ...Object.keys(pkg.dependencies ?? {}),
@@ -24,9 +29,17 @@ export function packageConfig(packageDir: string) {
 
   const src = join(packageDir, "src");
   const entry: Record<string, string> = {};
-  if (globSync("index.ts", { cwd: src }).length) entry["index"] = resolve(src, "index.ts");
-  for (const file of globSync("*/index.ts", { cwd: src })) {
-    entry[dirname(file) + "/index"] = resolve(src, file);
+  if (options.entries === "modules") {
+    const isSource = (file: string) =>
+      !/\.(test|d)\.tsx?$/.test(file) && !file.includes("__fixtures__");
+    for (const file of globSync("**/*.{ts,tsx}", { cwd: src }).filter(isSource)) {
+      entry[file.replace(/\.tsx?$/, "")] = resolve(src, file);
+    }
+  } else {
+    if (globSync("index.ts", { cwd: src }).length) entry["index"] = resolve(src, "index.ts");
+    for (const file of globSync("*/index.ts", { cwd: src })) {
+      entry[dirname(file) + "/index"] = resolve(src, file);
+    }
   }
 
   const copyCss: PluginOption = {

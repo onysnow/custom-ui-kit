@@ -8,12 +8,28 @@ packages/
   tokens/   themes, semantic mapping, motion tokens, contrast checker, theme runtime   (@onysnow/tokens)
   utils/    cn, hooks and other framework-free helpers                                  (@onysnow/utils)
   ui/       accessible components: Radix + Tailwind v4, themed by tokens               (@onysnow/ui)
+  fx/       light, glass, water and camera effects on one engine and tuning registry   (@onysnow/fx)
+  fx-assets/ textures, HDR rooms, fracture library, sounds (12 MB, versioned separately) (@onysnow/fx-assets)
 src/        the gallery/demo app (TanStack Start). Lovable-connected; it consumes the packages from source.
 tooling/    shared build and test configuration for every package
 ```
 
-Planned packages (see the extraction plan in the pull request): `shell`, `dataviz`, `fx-core`, `fx-optics`,
-`fx-light`, `fx-water`, `fx-react`.
+Planned packages: `shell` (edge-reveal app frame) and `dataviz` (graph, map, chart wrappers).
+
+### Why one `fx` package, not `fx-core` / `fx-optics` / `fx-light` / ...
+
+The effects are one system: the shadow pass reads the lights, the glass reads the room and the camera, the water reads
+the pane registry, and all of them read the tuning registry and share one scheduler and compositor. Split into
+packages, those edges would become cross-package cycles. So the effects live in one package with a folder per concern
+(`core`, `engine`, `optics`, `light`, `camera`, `materials`, `scene`, `water`, `balloons`, `fireworks`, `webs`,
+`secrets`, `tools`, `adapters`, `react`), every module is its own subpath (`@onysnow/fx/optics/edge-profile`), and
+`sideEffects: false` keeps unused ones out of a consumer's bundle. This is MUI's `@mui/material` shape.
+
+### The app seam: `configureFx`
+
+The effects used to import their host app (a Supabase-backed admin gate, a settings table for asset URLs). They now
+ask `core/config` instead: `configureFx({ experimentsAllowed, assetBase })`. Nothing is required; the defaults are the
+safe ones.
 
 ## Conventions
 
