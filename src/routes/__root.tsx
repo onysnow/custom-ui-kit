@@ -174,6 +174,8 @@ function RootComponent() {
         photoLights={level !== "off"}
         plasticBevel={level !== "off"}
         vignette={level === "full"}
+        // The lamp is the camera cursor: press and hold to wind it (the lamp lights), release to take the picture.
+        cursor={level !== "off"}
       />
       <Toaster position="bottom-right" />
     </QueryClientProvider>

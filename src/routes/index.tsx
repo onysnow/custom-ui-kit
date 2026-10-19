@@ -29,7 +29,7 @@ function Landing() {
 
 function Hero() {
   return (
-    <section className="relative isolate px-5 pb-24 pt-20 sm:px-8 lg:pt-28">
+    <section data-photo className="relative isolate px-5 pb-24 pt-20 sm:px-8 lg:pt-28">
       <div className="mx-auto grid w-full max-w-screen-xl grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
           <Badge

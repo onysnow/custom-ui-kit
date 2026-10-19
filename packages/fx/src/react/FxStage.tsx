@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FloorLight } from "./FloorLight";
+import { FreeSurfaces } from "./FreeSurfaces";
 import { GlassFilters } from "./GlassFilters";
 import { PhotoLights } from "./PhotoLights";
 import { PlasticBevel } from "./PlasticBevel";
@@ -44,6 +45,11 @@ export type FxStageProps = {
   floorLight?: boolean;
   /** The brightest spots of photographs behind panes act as lights. Default true. */
   photoLights?: boolean;
+  /**
+   * Type and plastic buttons that stand over a `[data-photo]` surface catch the lamp and throw shadows. Pass a
+   * selector to use your own marker. Default true.
+   */
+  freeSurfaces?: boolean | string;
   /** Lit, rounded plastic buttons (`.plastic`). Default true. */
   plasticBevel?: boolean;
   /** The lens's darker corners. Default true. */
@@ -74,6 +80,7 @@ export function FxStage({
   floorLight = true,
   photoLights = true,
   plasticBevel = true,
+  freeSurfaces = true,
   vignette = true,
   rain = false,
   balloons = false,
@@ -106,6 +113,9 @@ export function FxStage({
       {floorLight && <FloorLight />}
       {photoLights && <PhotoLights />}
       {plasticBevel && <PlasticBevel />}
+      {freeSurfaces && (
+        <FreeSurfaces {...(typeof freeSurfaces === "string" ? { scope: freeSurfaces } : {})} />
+      )}
       {vignette && <Vignette />}
       {heavy && rain && <WaterDrops />}
       {heavy && balloons && <Balloons />}

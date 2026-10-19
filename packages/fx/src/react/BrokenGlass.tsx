@@ -19,6 +19,7 @@ import {
   type LibraryIndex,
 } from "../optics/fracture-library";
 import { loadShard, shardOutline, shardsFor } from "../optics/glass-shards";
+import { addShapeCaster, polygonInBox, type ShapeCaster } from "../optics/shape-casters";
 import { cursorLamp, onLightChange, pointLights } from "../light/lights";
 // Glass's index: a crack face seen through the pane lies at 1/n of its depth.
 import { N_GLASS, crackGlow, type CrackLightSource } from "../optics/crack-light";
@@ -403,6 +404,18 @@ export function BrokenGlass({
         sides.set(k, v);
       }
       return v;
+    };
+
+    /*
+     * The pieces knocked out are in the room: each one that falls is a shape caster (optics/shape-casters) while it
+     * falls, so the lamp throws its shadow onto the photograph and the floor pass sees it like a balloon's. Clear float
+     * glass lets most light through; the shadow is faint, greenish, and fades as the piece does.
+     */
+    const SHARD_TINT: readonly [number, number, number] = [0.68, 0.82, 0.78];
+    const falling = new Map<number, { shape: ShapeCaster; remove: () => void; face: number }>();
+    const dropShadows = () => {
+      for (const c of falling.values()) c.remove();
+      falling.clear();
     };
 
     const draw = () => {
@@ -1127,6 +1140,45 @@ export function BrokenGlass({
           const dx = vx * t;
           const dy = vy * t + 0.5 * 1800 * t * t;
           const shrink = 1 - 0.15 * Math.min(1, t / 1.1);
+          // Its shadow: from the pane's face, falling away, passing more light as it fades.
+          let held = falling.get(k);
+          if (!held) {
+            const side = Math.max(box.w, box.h, 1);
+            const path = new Path2D();
+            polygonInBox(s.poly, { x: box.cx, y: box.cy }, side).forEach(([px, py], i) => {
+              if (i) path.lineTo(px, py);
+              else path.moveTo(px, py);
+            });
+            path.closePath();
+            const g = pane ? glassGeometry().find((q) => q.el === pane) : undefined;
+            const face = g
+              ? (Number.isFinite(g.stack.zBottom) ? g.stack.zBottom : g.causes.gap) +
+                g.causes.thickness
+              : 40;
+            const shape: ShapeCaster = {
+              id: `shard-${seed}-${k}`,
+              path,
+              x: -9999,
+              y: -9999,
+              size: side,
+              angle: 0,
+              height: face,
+              tint: [...SHARD_TINT],
+            };
+            held = { shape, remove: addShapeCaster(shape), face };
+            falling.set(k, held);
+          }
+          const gone = Math.min(1, (t * 1000) / FALL_MS);
+          held.shape.x = rect.left + box.cx + dx;
+          held.shape.y = rect.top + box.cy + dy;
+          held.shape.size = Math.max(box.w, box.h, 1) * shrink;
+          held.shape.angle = spin * t;
+          held.shape.height = Math.max(0.5, held.face * (1 - gone));
+          held.shape.tint = [
+            SHARD_TINT[0] + (1 - SHARD_TINT[0]) * gone,
+            SHARD_TINT[1] + (1 - SHARD_TINT[1]) * gone,
+            SHARD_TINT[2] + (1 - SHARD_TINT[2]) * gone,
+          ];
           ctx.save();
           ctx.globalAlpha = Math.max(0, 1 - (t * 1000) / FALL_MS);
           ctx.translate(box.cx + dx, box.cy + dy);
@@ -1167,6 +1219,8 @@ export function BrokenGlass({
           k++;
         }
         frame = requestAnimationFrame(draw);
+      } else {
+        dropShadows();
       }
     };
     const wake = () => {
@@ -1183,6 +1237,7 @@ export function BrokenGlass({
     const late = window.setTimeout(wake, 1500);
     return () => {
       disposed = true;
+      dropShadows();
       if (pane) clearShardMap(pane);
       faces?.dispose();
       facesPhotos?.dispose();

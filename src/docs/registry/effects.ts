@@ -47,7 +47,7 @@ export const EFFECTS: EffectEntry[] = [
       "One lamp and the room's lights, shared by every surface: glass, plastic, photographs and type light each other and cast shadows through the same scene.",
     exports: ["FloorLight", "PhotoLights", "TransmittedLight"],
     notes: [
-      "There is one lamp (the pointer) and the room\\u2019s lights. Every surface reads that same list, so adding a light reaches the glass, the floor and the plastic together.",
+      "There is one lamp (the camera cursor: press and hold to wind it and it lights where the pointer is) and the room\\u2019s lights. Every surface reads that same list, so adding a light reaches the glass, the floor and the plastic together.",
       "Shadows come from the same lights: panes and content throw a shadow whose length follows the light height and whose softness follows the light size, onto whatever is under them.",
       "Light is colour-correct. The lamp\\u2019s colour comes from a temperature in kelvin, and bright light burns toward white at its core as it does on film.",
     ],

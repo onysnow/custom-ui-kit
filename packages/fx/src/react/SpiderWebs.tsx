@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { previewing } from "../engine/preview";
 import { effectsEnabled } from "../engine/quality";
+import { addShapeCaster, threadQuad, type ShapeCaster } from "../optics/shape-casters";
 import { addTask, ORDER } from "../engine/scheduler";
 import { pointLights, pointer } from "../light/lights";
 import { camera } from "../camera/camera";
@@ -85,7 +86,11 @@ export function SpiderWebs() {
 
     let time = 0;
     const task = addTask("spider-webs", ORDER.scene, (now, dtMs) => {
-      if (!inView) return false;
+      if (!inView) {
+        // Out of view it casts nothing: a stale path would leave its shadow hanging at the old viewport position.
+        shadow.path = new Path2D();
+        return false;
+      }
       const dt = Math.min(dtMs / 1000, 1 / 30);
       time += dt;
       const p = pointer.x > -9999 ? local(pointer.x, pointer.y) : null;
@@ -115,6 +120,46 @@ export function SpiderWebs() {
       return true;
     });
 
+    /*
+     * The silk stands in the light like anything else: its shadow is a shape caster (optics/shape-casters), rebuilt
+     * from the live threads each frame (the path is in viewport px, so the 100-unit box is drawn at size 100 centred
+     * on (50, 50)). A thread is about a pixel wide and lets some light round it, so the shadow is faint and mostly
+     * penumbra, as a real web's is.
+     */
+    const THREAD_PX = 1.4;
+    const WEB_HEIGHT = 70;
+    const shadow: ShapeCaster = {
+      id: "spider-web",
+      path: new Path2D(),
+      x: 50,
+      y: 50,
+      size: 100,
+      angle: 0,
+      height: WEB_HEIGHT,
+      tint: [0.3, 0.3, 0.3],
+    };
+    const removeShadow = addShapeCaster(shadow);
+    const castThreads = (left: number, top: number) => {
+      const path = new Path2D();
+      for (let k = 0; k < net.m; k++) {
+        if (!net.alive[k]) continue;
+        const a = net.ea[k]!;
+        const b = net.eb[k]!;
+        const quad = threadQuad(
+          { x: net.x[a]! + left, y: net.y[a]! + top },
+          { x: net.x[b]! + left, y: net.y[b]! + top },
+          THREAD_PX,
+        );
+        if (!quad) continue;
+        path.moveTo(...quad[0]);
+        path.lineTo(...quad[1]);
+        path.lineTo(...quad[2]);
+        path.lineTo(...quad[3]);
+        path.closePath();
+      }
+      shadow.path = path;
+    };
+
     const draw = () => {
       const vw = document.documentElement.clientWidth || window.innerWidth;
       const vh = document.documentElement.clientHeight || window.innerHeight;
@@ -127,6 +172,7 @@ export function SpiderWebs() {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, vw, vh);
       const r = host.getBoundingClientRect();
+      castThreads(r.left, r.top);
       // The web lives in the host's px: draw it where the host is now.
       ctx.setTransform(1, 0, 0, 1, r.left, r.top);
       const D = camera.distance(vw);
@@ -209,6 +255,7 @@ export function SpiderWebs() {
     if (import.meta.env.DEV) (window as unknown as { __web?: unknown }).__web = { net, host };
     task.wake();
     return () => {
+      removeShadow();
       task.stop();
       seen.disconnect();
       window.removeEventListener("pointerdown", onDown);

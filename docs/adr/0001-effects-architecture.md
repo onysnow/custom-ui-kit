@@ -1,8 +1,8 @@
 # ADR-0001: One scene, an enforced layering
 
-**Status:** Proposed
+**Status:** Accepted (partly implemented; see "Implementation status")
 **Date:** 2026-10-19
-**Deciders:** Ony
+**Deciders:** Ony (2026-10-19: "the shadows should be integrated; otherwise do what's best")
 
 ## Context
 
@@ -160,3 +160,34 @@ stops changing, which it has not.
 5. [ ] Replace the tuning singleton with `createTuning` + `FxProvider`.
 6. [ ] Port the Playwright specs and run them on software GL in CI.
 7. [ ] Ask Ony which of web, firework, plastic and cracked-glass shadows should be added (a look change).
+
+## Implementation status (2026-10-19)
+
+Done, with tests where the logic is pure:
+
+- [x] **Quality and reduced-motion gating.** `effectsEnabled()` (false at the `minimal` tier) now stands down balloons,
+      spider webs, fireworks, the plastic bevel and cracked glass. The quality tiers are on by default instead of
+      behind a preview flag, so phones and visitors who prefer reduced motion get the quiet set, and software
+      renderers get `lite`. This is a behaviour change for the portfolio and Private-ai when they migrate.
+- [x] **Layer boundary check.** `bun run check:layers` (dependency-cruiser) runs in CI. 22 existing violations are
+      recorded in `.dependency-cruiser-known-violations.json`; a new one fails the build (verified by adding one).
+- [x] **Shadows integrated.**
+  - _Spider webs_ cast a shadow: the live thread network is a shape caster, rebuilt each frame (and emptied when out
+    of view).
+  - _Cracked glass:_ each piece knocked out is a shape caster while it falls, from the pane's face down to the floor,
+    passing more light as it fades.
+  - _Plastic buttons and free-standing type_ now cast and catch light over any surface marked `data-photo` (or your
+    own selector) through `FreeSurfaces`, which `FxStage` mounts (ported from the portfolio, router-free).
+  - _Fireworks_ emit light into the shared list, so every other surface's shadow is cast by them. Sparks cast no
+    shadow of their own: they are embers, and a shadow from a light source is not physical.
+- [x] Quick fixes from the code review: `configureFx` warns when `previews` is changed too late, `bootScript` escapes
+      its interpolated strings, `framer-motion` is a peer, the docs `Knob` restores its knob, and `ui/resizable` is
+      styled for react-resizable-panels v4.
+
+Still to do: move the light-reading shaders into a `passes/` layer, the `defineEffect` participant contract, replacing
+the tuning singleton, porting the Playwright specs, and the shadow visuals on a real GPU (see Consequences).
+
+**A finding while doing this.** The lamp is the camera cursor: it only lights while the shutter is wound (press and
+hold), and nothing sets its position unless `CustomCursor` is mounted. The docs site had no cursor mounted, so its lamp
+never lit and its copy ("the lamp follows your pointer") was wrong. `FxStage` now documents this and the docs site
+mounts the cursor whenever effects are on.

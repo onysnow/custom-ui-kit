@@ -35,8 +35,8 @@ export default function GlassDemo() {
               {LABEL[material]} · n {MATERIALS[material].ior}
             </p>
             <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-              Move the pointer over the page: the lamp follows it, and the edge, the reflection and
-              the light through the glass all answer.
+              Press and hold anywhere to wind the camera: the lamp lights where the pointer is, and
+              the edge, the reflection and the light through the glass all answer.
             </p>
           </div>
         </Pane>

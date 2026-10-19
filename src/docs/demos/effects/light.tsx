@@ -3,6 +3,7 @@ import { Button } from "@onysnow/ui/button";
 import { Stage } from "../../components/Stage";
 import { KnobGrid } from "../../components/Knob";
 
+// Press and hold anywhere on the page to wind the camera cursor: the lamp lights where the pointer is.
 // Light is not decoration here: one lamp and the room's lights are shared by every surface. A pane, a button and a
 // photograph all read the same scene, and each throws its shadow onto the next.
 export default function LightDemo() {

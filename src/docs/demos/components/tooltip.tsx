@@ -8,7 +8,7 @@ export default function TooltipDemo() {
         <TooltipTrigger asChild>
           <Button variant="outline">Hover or focus me</Button>
         </TooltipTrigger>
-        <TooltipContent>The lamp follows your pointer</TooltipContent>
+        <TooltipContent>Press and hold to light the lamp</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
