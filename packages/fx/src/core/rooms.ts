@@ -1,3 +1,5 @@
+import { fxAssetPath } from "./config";
+
 /**
  * The room reflected in the glass — one per page load, cycled on reload.
  *
@@ -39,13 +41,13 @@ export function roomScript(sources?: readonly string[], hdrSources?: readonly st
    * Falls back per slot rather than all-or-nothing: replacing one room should
    * not require replacing six.
    */
-  const urls = ROOMS.map((name, i) => sources?.[i] || `/rooms/${name}.jpg`);
+  const urls = ROOMS.map((name, i) => sources?.[i] || fxAssetPath(`/rooms/${name}.jpg`));
   /*
    * The same room in real brightness, for the glass shader's reflection (see
    * effects/optics/environment.ts). Same index, so the glass and the paper
    * always show the same room. Published as data-room-hdr on <html>.
    */
-  const hdr = ROOMS.map((name, i) => hdrSources?.[i] || `/rooms-hdr/${name}.jpg`);
+  const hdr = ROOMS.map((name, i) => hdrSources?.[i] || fxAssetPath(`/rooms-hdr/${name}.jpg`));
   return (
     `(function(){try{` +
     `var r=${JSON.stringify(urls)};` +

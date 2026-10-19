@@ -10,6 +10,8 @@
  * Plain module state rather than React state for the same reason as the tuning registry: the loops that read it run
  * inside their own requestAnimationFrame callbacks, so routing it through a re-render would cost more than it saves.
  */
+import type { PreviewName } from "../engine/preview";
+
 export type FxConfig = {
   /**
    * Whether this page may show unreleased previews and test switches (`?quality=`, `?try=`, `?perf`, ...).
@@ -18,6 +20,17 @@ export type FxConfig = {
   experimentsAllowed: () => boolean;
   /** Prefix for the library's bundled textures, rooms and sounds (no trailing slash). Default: "" (the site root). */
   assetBase: string;
+  /**
+   * Effects that are switched on for everyone on this page, in addition to the ones that are on by default.
+   * The named effects (rain on the glass, balloons, webs, fireworks, ...) otherwise only appear with `?try=<name>`
+   * for an admin. Read once, on first use, so call `configureFx` before the first effect mounts.
+   */
+  previews: readonly PreviewName[];
+  /**
+   * Turns a stored photograph path into a URL, for apps that keep photographs in storage (`<Img image={{ storage_path }}>`).
+   * Default: the path is used as the URL.
+   */
+  photoUrl?: ((storagePath: string) => string) | undefined;
 };
 
 /** The dev server on this machine: open, for development and tests. */
@@ -31,6 +44,7 @@ export function isLocalDev(
 const defaults: FxConfig = {
   experimentsAllowed: () => typeof window !== "undefined" && isLocalDev(),
   assetBase: "",
+  previews: [],
 };
 
 let current: FxConfig = { ...defaults };
@@ -57,4 +71,16 @@ export function experimentsAllowed(): boolean {
 /** Resolve a path the library ships (for example "/glass-surface.jpg") against the configured asset base. */
 export function fxAssetPath(path: string): string {
   return `${current.assetBase}${path}`;
+}
+
+/**
+ * CSS custom properties the stylesheet's fallbacks point at, resolved against the asset base. Put them on `<html>`
+ * (`style={fxCssVars()}`, or `document.documentElement.style.setProperty`) when the assets are not served from the
+ * site root; the stylesheet's own `url("/glass-surface.jpg")` fallbacks only work from the root.
+ */
+export function fxCssVars(): Record<string, string> {
+  return {
+    "--glass-surface": `url("${fxAssetPath("/glass-surface.jpg")}")`,
+    "--room": `url("${fxAssetPath("/rooms/metro.jpg")}")`,
+  };
 }

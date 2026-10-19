@@ -1,3 +1,4 @@
+import { fxAssetPath } from "../core/config";
 /**
  * The shutter's sound.
  *
@@ -20,9 +21,10 @@
  * 4 kHz tone would want silences this one outright.
  */
 
-const CLICK = "/sfx/shutter-click.mp3";
-const FLASH = "/sfx/shutter-flash.mp3";
-const CHARGE = "/sfx/flash-charge.mp3";
+const sound = (name: string) => () => fxAssetPath(`/sfx/${name}.mp3`);
+const CLICK = sound("shutter-click");
+const FLASH = sound("shutter-flash");
+const CHARGE = sound("flash-charge");
 
 let context: AudioContext | null = null;
 let master: GainNode | null = null;
@@ -207,11 +209,11 @@ export function primeShutterAudio() {
   master.gain.value = 0.55;
   master.connect(context.destination);
 
-  void Promise.all([load(CLICK), load(FLASH), load(CHARGE)]).then(startWhine);
+  void Promise.all([load(CLICK()), load(FLASH()), load(CHARGE())]).then(startWhine);
 }
 
 function startWhine() {
-  const buffer = buffers.get(CHARGE);
+  const buffer = buffers.get(CHARGE());
   if (!context || !master || !buffer || whine) return;
 
   /*
@@ -379,7 +381,7 @@ function fire(url: string, gain: number, delay = 0) {
 
 /** A click that takes no photograph: the mechanism alone. */
 export function playShutterClick() {
-  fire(CLICK, 0.5);
+  fire(CLICK(), 0.5);
 }
 
 /**
@@ -401,8 +403,8 @@ export function playShutterFlash() {
    * the mechanism is audibly first; simultaneous reads as one indistinct
    * noise, and the small gap is what makes it a camera rather than a sample.
    */
-  fire(CLICK, 0.45);
-  fire(FLASH, 0.9, 0.018);
+  fire(CLICK(), 0.45);
+  fire(FLASH(), 0.9, 0.018);
   spent = true;
   if (!context) return;
   const now = context.currentTime;

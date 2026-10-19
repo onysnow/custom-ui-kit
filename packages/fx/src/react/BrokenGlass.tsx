@@ -1,3 +1,4 @@
+import { fxAssetPath } from "../core/config";
 import { useEffect, useRef } from "react";
 import {
   fracture,
@@ -254,7 +255,7 @@ export function BrokenGlass({
      */
     let entry: BreakEntry | null = null;
     if (previewing("breaklib")) {
-      void fetch("/breaks/index.json")
+      void fetch(fxAssetPath("/breaks/index.json"))
         .then((r) => (r.ok ? (r.json() as Promise<LibraryIndex>) : null))
         .then((index) => {
           const name = index ? pickEntry(index, kind, seed) : null;

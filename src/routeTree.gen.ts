@@ -10,33 +10,145 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DocsRouteImport } from './routes/docs'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as DocsIndexRouteImport } from './routes/docs.index'
+import { Route as DocsInstallationRouteImport } from './routes/docs.installation'
+import { Route as DocsThemingRouteImport } from './routes/docs.theming'
+import { Route as DocsComponentsIndexRouteImport } from './routes/docs.components.index'
+import { Route as DocsComponentsSlugRouteImport } from './routes/docs.components.$slug'
+import { Route as DocsEffectsIndexRouteImport } from './routes/docs.effects.index'
+import { Route as DocsEffectsSlugRouteImport } from './routes/docs.effects.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsInstallationRoute = DocsInstallationRouteImport.update({
+  id: '/installation',
+  path: '/installation',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsThemingRoute = DocsThemingRouteImport.update({
+  id: '/theming',
+  path: '/theming',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsComponentsIndexRoute = DocsComponentsIndexRouteImport.update({
+  id: '/components/',
+  path: '/components/',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsComponentsSlugRoute = DocsComponentsSlugRouteImport.update({
+  id: '/components/$slug',
+  path: '/components/$slug',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsEffectsIndexRoute = DocsEffectsIndexRouteImport.update({
+  id: '/effects/',
+  path: '/effects/',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsEffectsSlugRoute = DocsEffectsSlugRouteImport.update({
+  id: '/effects/$slug',
+  path: '/effects/$slug',
+  getParentRoute: () => DocsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/docs': typeof DocsRouteWithChildren
+  '/gallery': typeof GalleryRoute
+  '/docs/installation': typeof DocsInstallationRoute
+  '/docs/theming': typeof DocsThemingRoute
+  '/docs/': typeof DocsIndexRoute
+  '/docs/components/$slug': typeof DocsComponentsSlugRoute
+  '/docs/effects/$slug': typeof DocsEffectsSlugRoute
+  '/docs/components/': typeof DocsComponentsIndexRoute
+  '/docs/effects/': typeof DocsEffectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/gallery': typeof GalleryRoute
+  '/docs/installation': typeof DocsInstallationRoute
+  '/docs/theming': typeof DocsThemingRoute
+  '/docs': typeof DocsIndexRoute
+  '/docs/components/$slug': typeof DocsComponentsSlugRoute
+  '/docs/effects/$slug': typeof DocsEffectsSlugRoute
+  '/docs/components': typeof DocsComponentsIndexRoute
+  '/docs/effects': typeof DocsEffectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/docs': typeof DocsRouteWithChildren
+  '/gallery': typeof GalleryRoute
+  '/docs/installation': typeof DocsInstallationRoute
+  '/docs/theming': typeof DocsThemingRoute
+  '/docs/': typeof DocsIndexRoute
+  '/docs/components/$slug': typeof DocsComponentsSlugRoute
+  '/docs/effects/$slug': typeof DocsEffectsSlugRoute
+  '/docs/components/': typeof DocsComponentsIndexRoute
+  '/docs/effects/': typeof DocsEffectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/docs'
+    | '/gallery'
+    | '/docs/installation'
+    | '/docs/theming'
+    | '/docs/'
+    | '/docs/components/$slug'
+    | '/docs/effects/$slug'
+    | '/docs/components/'
+    | '/docs/effects/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/gallery'
+    | '/docs/installation'
+    | '/docs/theming'
+    | '/docs'
+    | '/docs/components/$slug'
+    | '/docs/effects/$slug'
+    | '/docs/components'
+    | '/docs/effects'
+  id:
+    | '__root__'
+    | '/'
+    | '/docs'
+    | '/gallery'
+    | '/docs/installation'
+    | '/docs/theming'
+    | '/docs/'
+    | '/docs/components/$slug'
+    | '/docs/effects/$slug'
+    | '/docs/components/'
+    | '/docs/effects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DocsRoute: typeof DocsRouteWithChildren
+  GalleryRoute: typeof GalleryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +160,98 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/': {
+      id: '/docs/'
+      path: '/'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/installation': {
+      id: '/docs/installation'
+      path: '/installation'
+      fullPath: '/docs/installation'
+      preLoaderRoute: typeof DocsInstallationRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/theming': {
+      id: '/docs/theming'
+      path: '/theming'
+      fullPath: '/docs/theming'
+      preLoaderRoute: typeof DocsThemingRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/components/': {
+      id: '/docs/components/'
+      path: '/components'
+      fullPath: '/docs/components/'
+      preLoaderRoute: typeof DocsComponentsIndexRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/components/$slug': {
+      id: '/docs/components/$slug'
+      path: '/components/$slug'
+      fullPath: '/docs/components/$slug'
+      preLoaderRoute: typeof DocsComponentsSlugRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/effects/': {
+      id: '/docs/effects/'
+      path: '/effects'
+      fullPath: '/docs/effects/'
+      preLoaderRoute: typeof DocsEffectsIndexRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/effects/$slug': {
+      id: '/docs/effects/$slug'
+      path: '/effects/$slug'
+      fullPath: '/docs/effects/$slug'
+      preLoaderRoute: typeof DocsEffectsSlugRouteImport
+      parentRoute: typeof DocsRoute
+    }
   }
 }
 
+interface DocsRouteChildren {
+  DocsInstallationRoute: typeof DocsInstallationRoute
+  DocsThemingRoute: typeof DocsThemingRoute
+  DocsIndexRoute: typeof DocsIndexRoute
+  DocsComponentsSlugRoute: typeof DocsComponentsSlugRoute
+  DocsEffectsSlugRoute: typeof DocsEffectsSlugRoute
+  DocsComponentsIndexRoute: typeof DocsComponentsIndexRoute
+  DocsEffectsIndexRoute: typeof DocsEffectsIndexRoute
+}
+
+const DocsRouteChildren: DocsRouteChildren = {
+  DocsInstallationRoute: DocsInstallationRoute,
+  DocsThemingRoute: DocsThemingRoute,
+  DocsIndexRoute: DocsIndexRoute,
+  DocsComponentsSlugRoute: DocsComponentsSlugRoute,
+  DocsEffectsSlugRoute: DocsEffectsSlugRoute,
+  DocsComponentsIndexRoute: DocsComponentsIndexRoute,
+  DocsEffectsIndexRoute: DocsEffectsIndexRoute,
+}
+
+const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DocsRoute: DocsRouteWithChildren,
+  GalleryRoute: GalleryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

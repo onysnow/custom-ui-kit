@@ -1,6 +1,11 @@
+@layer theme, base, components, fx-components, utilities;
 @import "tailwindcss" source(none);
 @source "../src";
 @source "../packages/ui/src";
+@source "../packages/fx/src";
 @import "tw-animate-css";
 @import "../packages/tokens/src/index.css";
 @import "../packages/tokens/src/tailwind.css";
+@import "../packages/fx/src/styles/effects.css";
+
+@import "./docs/docs.css";

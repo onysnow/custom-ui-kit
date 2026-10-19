@@ -9,6 +9,18 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import "../docs/fx";
+import { FxStage } from "@onysnow/fx/react/FxStage";
+import { fxCssVars } from "@onysnow/fx/core/config";
+import { roomScript } from "@onysnow/fx/core/rooms";
+import { Backdrop } from "../docs/components/Backdrop";
+import { SiteFooter } from "../docs/components/SiteFooter";
+import { SiteHeader } from "../docs/components/SiteHeader";
+import { useEffectsLevel } from "../docs/effects-level";
+import { themes } from "../docs/theme";
+import { SITE } from "../docs/site";
+import { Toaster } from "@onysnow/ui/sonner";
+
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -77,24 +89,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "OnySnowapi — Friendly Web Components" },
+      { title: `${SITE.name} — ${SITE.tagline}` },
       {
         name: "description",
-        content:
-          "A warm, accessible component library for the web. Copy, paste, and ship faster with OnySnowapi.",
+        content: SITE.description,
       },
-      { name: "author", content: "OnySnowapi" },
-      { property: "og:title", content: "OnySnowapi — Friendly Web Components" },
-      {
-        property: "og:description",
-        content:
-          "A warm, accessible component library for the web. Copy, paste, and ship faster with OnySnowapi.",
-      },
+      { name: "author", content: "Onysnow" },
+      { property: "og:title", content: `${SITE.name} — ${SITE.tagline}` },
+      { property: "og:description", content: SITE.description },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@OnySnowapi" },
     ],
+    // Before first paint: the saved theme (so it never flashes the default) and this visit's room reflection.
+    scripts: [{ children: themes.bootScript }, { children: roomScript() }],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Jost:wght@300;400;500&family=Manrope:wght@300..700&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -110,7 +124,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      data-theme="rain-noir"
+      data-effects="light"
+      style={fxCssVars()}
+      suppressHydrationWarning
+    >
       <head>
         <HeadContent />
       </head>
@@ -124,11 +144,38 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const level = useEffectsLevel();
+
+  // Apply the saved appearance once hydrated (the boot script already set it before first paint).
+  useEffect(() => {
+    themes.applyAppearance();
+    document.documentElement.dataset["effects"] = level;
+  }, [level]);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <Backdrop />
+      <a
+        href="#main-content"
+        className="fixed left-4 top-3 z-[60] -translate-y-20 rounded-md bg-primary px-4 py-2 text-primary-foreground focus:translate-y-0"
+      >
+        Skip to content
+      </a>
+      <SiteHeader />
+      <main id="main-content" className="min-h-svh pt-16">
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </main>
+      <SiteFooter />
+      {/* The effect layers: lights always (unless off), rain only at "full". */}
+      <FxStage
+        rain={level === "full"}
+        floorLight={level !== "off"}
+        photoLights={level !== "off"}
+        plasticBevel={level !== "off"}
+        vignette={level === "full"}
+      />
+      <Toaster position="bottom-right" />
     </QueryClientProvider>
   );
 }

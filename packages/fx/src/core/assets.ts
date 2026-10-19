@@ -1,3 +1,5 @@
+import { fxAssetPath } from "./config";
+
 /**
  * Files the effect layer loads, and where they actually come from.
  *
@@ -77,7 +79,7 @@ export const ROOM_HDR_KEYS = [
 ] as const;
 
 export function assetUrl(asset: (typeof SITE_ASSETS)[keyof typeof SITE_ASSETS]): string {
-  if (typeof document === "undefined") return asset.fallback;
+  if (typeof document === "undefined") return fxAssetPath(asset.fallback);
   const set = document.documentElement.dataset[asset.attr];
-  return set && set.trim() ? set : asset.fallback;
+  return set && set.trim() ? set : fxAssetPath(asset.fallback);
 }

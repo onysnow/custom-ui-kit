@@ -1,3 +1,4 @@
+import { fxAssetPath } from "../core/config";
 import { useEffect, useRef } from "react";
 import { addTask, ORDER } from "../engine/scheduler";
 
@@ -131,8 +132,8 @@ export function FlareOverlay({
         // WebM first; the MP4 is there for Safari, which came to VP9 late and
         // on older iOS never will.
         for (const [src, type] of [
-          [`/flares/${flare.name}.webm`, "video/webm"],
-          [`/flares/${flare.name}.mp4`, "video/mp4"],
+          [fxAssetPath(`/flares/${flare.name}.webm`), "video/webm"],
+          [fxAssetPath(`/flares/${flare.name}.mp4`), "video/mp4"],
         ] as const) {
           const source = document.createElement("source");
           source.src = src;

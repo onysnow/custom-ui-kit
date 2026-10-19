@@ -7,18 +7,30 @@
  *   @layer theme, base, components, fx-components, utilities;
  */
 
+/*
+ * The two colours the effects tint with: the bokeh lights, the plastic's rim and the shutter ring. Defaults are a warm
+ * amber and a teal; override either on :root (outside the layer) to follow your theme, e.g.
+ * `:root { --amber: var(--accent-1); --teal: var(--accent-2); }`.
+ */
+@layer fx-components {
+  :root {
+    --amber: oklch(0.72 0.14 68);
+    --teal: oklch(0.63 0.105 190);
+  }
+}
+
 /* The photograph vignette the glass shader mirrors (optics/bokeh PHOTO_VIGNETTE). Change both together. */
 .image-vignette {
   box-shadow: inset 0 0 9rem 1rem oklch(0.08 0.01 55 / 70%);
 }
-
 
 /*
  * On a pane, a card's shadow lies on the glass UNDER the water (Ony,
  * 2026-10-11: the rain "cut off" round the photographs): the drops sit on
  * the glass in the print's shadow, darkened, never hidden. Drawn over the
  * water layer (z -1) the shadow's band erased the drops round every photo.
- */.glass [data-cast]::before {
+ */
+.glass [data-cast]::before {
   z-index: -2;
 }
 
@@ -26,8 +38,6 @@
   position: relative;
   overflow: visible;
 }
-
-
 
 /* ===================== Cursor =====================
  *
@@ -39,7 +49,8 @@
  * confirmed a fine pointer, so touch devices and anyone with reduced motion
  * keep their own pointer and never meet this at all.
  */
-/* Another tool in the hand: the camera's ring and dot are put away with it (CustomCursor, held cameraInHand). */html[data-other-tool] .custom-cursor {
+/* Another tool in the hand: the camera's ring and dot are put away with it (CustomCursor, held cameraInHand). */
+html[data-other-tool] .custom-cursor {
   display: none;
 }
 
@@ -123,8 +134,6 @@
     opacity 0.2s ease;
 }
 
-
-
 /*
  * `--ring-size` is the one number the ring and the aperture both read.
  *
@@ -133,26 +142,24 @@
  * while the aperture stayed at 33px and the two had visibly nothing to do with
  * each other. Every state below re-points this variable instead of setting a
  * width, so the blades follow the ring wherever it goes.
- */.custom-cursor__ring {
+ */
+.custom-cursor__ring {
   /* Measured off bryanminear.com: .circle-outer is 30x30, 1px solid #fff. */
   width: var(--ring-size);
   height: var(--ring-size);
   border: var(--tune-ring-width, 1px) solid rgb(255 255 255 / var(--tune-ring-alpha, 1));
 }
 
-
-
 /*
  * The default: a thin ring with a small solid dot at its centre, and nothing
  * else. Matched to bryanminear.com, which is the reference for this.
- */.custom-cursor__dot {
+ */
+.custom-cursor__dot {
   /* Measured: .circle-inner is 6x6, solid white. */
   width: var(--tune-dot, 6px);
   height: var(--tune-dot, 6px);
   background-color: rgb(255 255 255 / var(--tune-dot-alpha, 1));
 }
-
-
 
 /* Over a link or button: a filled disc big enough to sit behind a nav item. */
 /*
@@ -165,7 +172,8 @@
  * CustomCursor overrides this inline with the fitted size whenever the
  * control's larger axis is under 56px, so the ring hugs a knob instead of
  * engulfing it -- keep the two numbers in step (LINK_RING).
- */.custom-cursor[data-state="link"] {
+ */
+.custom-cursor[data-state="link"] {
   --ring-base: 56px;
 }
 
@@ -178,17 +186,15 @@
   opacity: 0;
 }
 
-
 /*
  * ...unless it is lit. Over a link the resting dot hides so it does not sit
  * on the words, but once the shutter is charging the dot is the pilot light,
  * the source of everything the glass is doing, and it stays -- otherwise the
  * lamp over any photograph (they are all links) had no pilot at all.
- */.custom-cursor[data-state="link"][data-pilot] .custom-cursor__dot {
+ */
+.custom-cursor[data-state="link"][data-pilot] .custom-cursor__dot {
   opacity: 1;
 }
-
-
 
 /*
  * Over a photograph: a wider ring, and deliberately NOT filled.
@@ -218,7 +224,8 @@
  * the fill had already gone. A 1px ring under `difference` reads against
  * anything -- dark on a bright frame, bright on a dark one -- which is the
  * whole reason the reference cursor works.
- */.custom-cursor[data-state="media"] .custom-cursor__ring {
+ */
+.custom-cursor[data-state="media"] .custom-cursor__ring {
   background-color: transparent;
 }
 
@@ -227,20 +234,17 @@
   cursor: none !important;
 }
 
-
-
 /* The lightbox opens its own layer above everything; the disc chasing the
-   pointer over it is noise rather than atmosphere. */.has-custom-cursor:has(.yarl__container) .custom-cursor {
+   pointer over it is noise rather than atmosphere. */
+.has-custom-cursor:has(.yarl__container) .custom-cursor {
   opacity: 0 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-.custom-cursor {
+  .custom-cursor {
     display: none;
   }
 }
-
-
 
 /* ===================== Glass edges and bokeh =====================
  *
@@ -257,7 +261,8 @@
  * out-of-focus highlight forms — a point of light spread by the optics in front
  * of it. Anything not covered by glass keeps a gentle falloff of its own so the
  * edges of the field don't show as hard circles.
- */.bokeh-field {
+ */
+.bokeh-field {
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -279,7 +284,6 @@
 }
 
 @layer fx-components {
-
   /* =====================================================================
    * GLASS
    *
@@ -300,7 +304,8 @@
    * but costs a filter pass over a full-width element on every frame, so the
    * bezel here is a second, stronger backdrop pass masked to the edge band —
    * cheap, and close enough at this scale.
-   * ===================================================================== */.glass {
+   * ===================================================================== */
+  .glass {
     position: relative;
     /*
      * The pane's smoky fill, as a property so the liquid glass can read the
@@ -356,13 +361,12 @@
      */
     box-shadow: 0 18px 40px -30px oklch(0 0 0 / 0.9);
   }
-.glass--bar {
+  .glass--bar {
     --pane-fill: oklch(0.145 0.011 55 / 26%);
     background-color: var(--pane-fill);
     backdrop-filter: blur(28px) saturate(150%) var(--glass-bevel,);
     box-shadow: none;
   }
-
 
   /*
    * The near arris is not drawn. It was a 1 px ring round every pane, and in
@@ -405,7 +409,8 @@
    * What a side REFLECTS -- the photograph facing it, mirrored and squeezed,
    * changing along its length -- the glint where the lamp is, and the echo
    * just inside, are the glass light pass's.
-   */.glass-side {
+   */
+  .glass-side {
     position: absolute;
     left: 0;
     top: 0;
@@ -422,13 +427,13 @@
     mix-blend-mode: multiply;
   }
 
-
   /*
    * The lit edge and its bloom (GlassLight draws it; the scene places it over
    * the pane and its bleed, like the side faces). Above the sides, adding
    * light the way the surface layer does: the light a lit arris throws comes
    * off the front corner, so the side's absorption must not darken it.
-   */.glass-glow {
+   */
+  .glass-glow {
     position: absolute;
     left: 0;
     top: 0;
@@ -438,12 +443,12 @@
     mix-blend-mode: plus-lighter;
   }
 
-
   /*
    * The far arris: the eased corner between the side and the back face turns
    * the light passing it away from you, so it is a thin DARKER line, soft
    * over the corner's radius (farArrisLoss) and centred on the corner.
-   */.glass-side::after {
+   */
+  .glass-side::after {
     content: "";
     position: absolute;
     left: 0;
@@ -452,15 +457,15 @@
     background-image: var(--far-arris);
     mix-blend-mode: multiply;
   }
-.glass-side--top::after {
+  .glass-side--top::after {
     bottom: calc(-1 * var(--far-arris-span, 4.5px));
   }
-.glass-side--bottom::after {
+  .glass-side--bottom::after {
     top: calc(-1 * var(--far-arris-span, 4.5px));
   }
 
-
-  /* The left and right faces: the same far-arris line, standing upright. */.glass-side--left::after,
+  /* The left and right faces: the same far-arris line, standing upright. */
+  .glass-side--left::after,
   .glass-side--right::after {
     top: 0;
     bottom: 0;
@@ -469,15 +474,13 @@
     width: calc(2 * var(--far-arris-span, 4.5px));
     height: auto;
   }
-.glass-side--left::after {
+  .glass-side--left::after {
     right: calc(-1 * var(--far-arris-span, 4.5px));
   }
-.glass-side--right::after {
+  .glass-side--right::after {
     left: calc(-1 * var(--far-arris-span, 4.5px));
   }
 }
-
-
 
 /* ===================== Shutter =====================
  *
@@ -485,7 +488,8 @@
  * one decay, with a hard floor on how often it can repeat (see
  * lib/circle-gesture.ts). Suppressed entirely under prefers-reduced-motion,
  * where a full-screen luminance jump is not a style preference but a hazard.
- */.shutter-flash {
+ */
+.shutter-flash {
   position: fixed;
   inset: 0;
   z-index: 9998;
@@ -513,9 +517,8 @@
   animation: shutter-fire 0.66s cubic-bezier(0.1, 0.8, 0.2, 1) both;
 }
 
-
-
-/* The frame lines that snap in at the corners as the shutter fires. */.shutter-frame {
+/* The frame lines that snap in at the corners as the shutter fires. */
+.shutter-frame {
   position: fixed;
   inset: 0;
   z-index: 9997;
@@ -563,32 +566,30 @@
 }
 
 @media (pointer: coarse), (hover: none) {
-.glass {
+  .glass {
     backdrop-filter: blur(12px) saturate(130%);
   }
-.glass--bar {
+  .glass--bar {
     backdrop-filter: blur(14px) saturate(130%);
   }
 
-
-  /* Both of these exist to be lit, and there is nothing here to light them. */.glass > .glass__bokeh,
+  /* Both of these exist to be lit, and there is nothing here to light them. */
+  .glass > .glass__bokeh,
   .glass > .glass__refract,
   .transmitted,
   .photo-surface {
     display: none;
   }
 
-
   /*
    * Thirty layers drifting behind eighteen blurs, invalidating them every
    * frame. Kept in place, since they are part of the picture, but still.
-   */.bokeh {
+   */
+  .bokeh {
     animation: none;
     will-change: auto;
   }
 }
-
-
 
 /* ---- The light that gets through ---- */
 
@@ -613,7 +614,8 @@
  *   thrown sideways and piles up just outside the shadow. It is why a glass of
  *   water casts a bright line INSIDE its own shadow, and why the edge of this
  *   reads brighter than its middle rather than fading out.
- */.transmitted {
+ */
+.transmitted {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -645,9 +647,8 @@
   inset: 0;
 }
 
-
-
-/* The pool itself, mottled by what it passed through. */.transmitted::before {
+/* The pool itself, mottled by what it passed through. */
+.transmitted::before {
   background-image: var(--glass-surface, url("/glass-surface.jpg"));
   background-repeat: repeat;
   background-position: calc(-1 * var(--surface-x, 0px)) calc(-1 * var(--surface-y, 0px));
@@ -666,12 +667,11 @@
   mask-repeat: no-repeat;
 }
 
-
-
 /*
  * The caustic: a tighter, brighter core where the bevel has gathered the light
  * rather than spread it.
- */.transmitted::after {
+ */
+.transmitted::after {
   background: radial-gradient(
     circle var(--tune-transmit-core, 210px) at var(--lit-x, 50%) var(--lit-y, 50%),
     color-mix(in oklab, var(--amber) 30%, oklch(1 0 0 / 0.5)) 0%,
@@ -682,12 +682,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-.transmitted {
+  .transmitted {
     display: none;
   }
 }
-
-
 
 /*
  * A pane the rasterised glass has taken over stops being CSS glass.
@@ -709,7 +707,8 @@
  * blur; over a refracted backdrop it is a second veil doing the same job
  * twice. The shader has its own tint and opacity for this -- and with the
  * blur gone, those two finally have something visible to act on.
- */.glass[data-liquid] {
+ */
+.glass[data-liquid] {
   /*
    * ONE property, unprefixed. Do not add `-webkit-backdrop-filter` here.
    *
@@ -723,8 +722,6 @@
   backdrop-filter: none;
   background: transparent;
 }
-
-
 
 /* ---- What sits on the glass, and what that throws across it ---- */
 
@@ -762,18 +759,16 @@
  * `scale-110` zoom on hover, and the wrapper span inside it already has
  * `overflow: hidden` doing exactly that. Opening the anchor lets the shadow
  * land on the glass without letting the zoom escape.
- */.glass a:has(> span > .photo-surface) {
+ */
+.glass a:has(> span > .photo-surface) {
   overflow: visible;
 }
 
-
-
-/* The photograph's own frame, thrown across the pane under it. */span:has(> .photo-surface) {
+/* The photograph's own frame, thrown across the pane under it. */
+span:has(> .photo-surface) {
   box-shadow: var(--cast-x, 0px) var(--cast-y, 0px) var(--cast-blur, 0px) var(--cast-spread, 0px)
     rgba(0, 0, 0, var(--cast-alpha, 0));
 }
-
-
 
 /*
  * On a card, the shadow is the card's, in the pane's lowest layer (a
@@ -781,7 +776,8 @@
  * layers by document order): under every card, so one card's shadow never
  * lies across its neighbour's photograph (2h). The photograph's own shadow
  * is off there.
- */[data-cast] > span:has(> .photo-surface) {
+ */
+[data-cast] > span:has(> .photo-surface) {
   box-shadow: none;
 }
 
@@ -796,8 +792,6 @@
     rgba(0, 0, 0, var(--cast-alpha, 0));
 }
 
-
-
 /*
  * Type, the same way.
  *
@@ -805,7 +799,8 @@
  * fraction of what a mounted print does, so its shadow is tighter and fainter.
  * Anything heavier reads as a drop shadow someone added rather than as light
  * falling across a surface.
- */.glass h1,
+ */
+.glass h1,
 .glass h2,
 .glass h3,
 .glass h4,
@@ -825,14 +820,13 @@
   );
 }
 
-
-
 /*
  * Where the floor light runs (item 52): the type's shadows are worked out per pixel
  * from its own glyphs (the floor light, effects/optics/casters), each letter
  * falling away from the lamp wherever the lamp is -- a whole block's shadow
  * offset one way (above) is wrong for the letters on the lamp's other side.
- */html[data-cast-shadows] .glass h1,
+ */
+html[data-cast-shadows] .glass h1,
 html[data-cast-shadows] .glass h2,
 html[data-cast-shadows] .glass h3,
 html[data-cast-shadows] .glass h4,
@@ -841,17 +835,14 @@ html[data-cast-shadows] .glass blockquote {
   filter: none;
 }
 
-
-
 /*
  * The hero's copy and buttons stand above the photograph's floor light, as
  * the panes do: their shadows fall on the photograph, not over them.
- */html[data-cast-shadows] [data-photo] :is(h1, h2, h3, p, .plastic, a) {
+ */
+html[data-cast-shadows] [data-photo] :is(h1, h2, h3, p, .plastic, a) {
   position: relative;
   z-index: 2;
 }
-
-
 
 /*
  * Plastic: the orange buttons.
@@ -875,7 +866,8 @@ html[data-cast-shadows] .glass blockquote {
  *   dark line hugging the button, before the orange shows beyond it.
  *
  *   THE RIM. The rounded edge facing the lamp catches it as a thin line.
- */.plastic {
+ */
+.plastic {
   --plastic-on: calc(var(--lit-over, 0) * var(--lit-on, 0));
   position: relative;
   background-image: radial-gradient(
@@ -900,9 +892,8 @@ html[data-cast-shadows] .glass blockquote {
     0 0 18px 3px var(--fluor-glow, transparent);
 }
 
-
-
-/* The orange light the lamp throws through it, onto what is behind: mild, a little wider than the button. */.plastic::before {
+/* The orange light the lamp throws through it, onto what is behind: mild, a little wider than the button. */
+.plastic::before {
   content: "";
   position: absolute;
   inset: -7px;
@@ -917,9 +908,8 @@ html[data-cast-shadows] .glass blockquote {
   opacity: calc(var(--plastic-on) * 0.28);
 }
 
-
-
-/* The rounded edge facing the lamp catching it: a thin rim, brightest toward the lamp. */.plastic::after {
+/* The rounded edge facing the lamp catching it: a thin rim, brightest toward the lamp. */
+.plastic::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -941,14 +931,13 @@ html[data-cast-shadows] .glass blockquote {
     linear-gradient(#000 0 0);
 }
 
-
-
 /*
  * The yellow buttons (components/ui/button variant "frosted"): a <Pane> of
  * the site's glass, hard-cornered like every pane, its fill tinted a warm
  * yellow (the pane's --pane-fill), the control filling it. Inline, so it sits
  * in a row of links as a button does.
- */.glass.glass-button {
+ */
+.glass.glass-button {
   --pane-fill: oklch(0.86 0.17 90 / 0.82);
   display: inline-flex;
   border-radius: 0;
@@ -970,12 +959,12 @@ html[data-cast-shadows] .glass blockquote {
     0 4px 12px -6px rgb(0 0 0 / 0.6);
 }
 
-
 /*
  * Nor the light-on-glass layer's arrises: drawn for a band, they lit only its
  * top and bottom -- on a button, a bright bar under it and a line over it
  * and nothing at the ends. Its edge is the even bevel above.
- */.glass.glass-button ~ .glass-side,
+ */
+.glass.glass-button ~ .glass-side,
 .glass.glass-button ~ .glass-glow,
 .glass.glass-button > .glass__surface {
   display: none;
@@ -1000,13 +989,12 @@ html[data-cast-shadows] .glass blockquote {
   background-color: rgb(120 70 0 / 0.12);
 }
 
-
-
 /*
  * The red room's door in the nav (Ony, 2026-10-10): it arrives after the
  * flash as the flash's afterimage -- out of a red glow, settling to a nav
  * item in the safelight's red.
- */.red-room-door {
+ */
+.red-room-door {
   color: oklch(0.66 0.2 27);
   background: none;
   border: 0;
@@ -1026,19 +1014,18 @@ html[data-cast-shadows] .glass blockquote {
 }
 
 @media (prefers-reduced-motion: reduce) {
-.red-room-door {
+  .red-room-door {
     animation: none;
   }
 }
-
-
 
 /*
  * Dark plastic: the round arrow buttons (2i, Ony 2026-09-30: "these
  * elements have no shadow or plastic sheen"). Glossy black plastic, opaque:
  * the same face highlight and rim as the orange, no coloured light through
  * it -- it throws a shadow instead, by the one shadow model, like a card.
- */.plastic--dark {
+ */
+.plastic--dark {
   box-shadow:
     var(--cast-x, 0px) var(--cast-y, 0px) var(--cast-blur, 0px) var(--cast-spread, 0px)
       rgb(0 0 0 / var(--cast-alpha, 0)),
@@ -1050,27 +1037,23 @@ html[data-cast-shadows] .glass blockquote {
   display: none;
 }
 
-
-
-/* A card's shadow too: the floor light throws it, on the glass and through it (item 52). */html[data-cast-shadows] .glass [data-cast]::before {
+/* A card's shadow too: the floor light throws it, on the glass and through it (item 52). */
+html[data-cast-shadows] .glass [data-cast]::before {
   display: none;
 }
 
-
-
-/* Its shadow is the floor light's, through the glass, where that runs (item 52). */html[data-cast-shadows] .plastic--dark {
+/* Its shadow is the floor light's, through the glass, where that runs (item 52). */
+html[data-cast-shadows] .plastic--dark {
   box-shadow:
     0 0 0 1px rgb(0 0 0 / calc(0.45 * var(--plastic-on))),
     0 0 5px 1px rgb(0 0 0 / calc(0.35 * var(--plastic-on)));
 }
 
 @media (prefers-reduced-motion: reduce) {
-.plastic::before {
+  .plastic::before {
     display: none;
   }
 }
-
-
 
 /*
  * ?try=shaderplastic (item 18b): on a pane, the glass light pass lights the
@@ -1079,7 +1062,8 @@ html[data-cast-shadows] .glass blockquote {
  * surface layer). What stays here: the edge's shadow (box-shadow, which
  * darkens, and that layer only adds) and the rim's resting sheen from the
  * room.
- */html[data-try~="shaderplastic"] .glass .plastic {
+ */
+html[data-try~="shaderplastic"] .glass .plastic {
   background-image: none;
 }
 
@@ -1097,7 +1081,7 @@ html[data-try~="shaderplastic"] .glass .plastic::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-span:has(> .photo-surface),
+  span:has(> .photo-surface),
   .glass h1,
   .glass h2,
   .glass h3,
@@ -1109,8 +1093,6 @@ span:has(> .photo-surface),
     filter: none;
   }
 }
-
-
 
 /* ---- Photographic paper ---- */
 
@@ -1133,7 +1115,8 @@ span:has(> .photo-surface),
  *   - it is DIM. Paper reflects a few percent where glass reflects far more,
  *     so this has to sit well below the pane's own highlight or the
  *     photographs start looking laminated.
- */.photo-surface {
+ */
+.photo-surface {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -1157,12 +1140,10 @@ span:has(> .photo-surface),
   transition: opacity 0.35s ease;
 }
 
-
-/* Over its own photograph even where the pane lifts photographs over the rain (z 4, below). */.glass .photo-surface {
+/* Over its own photograph even where the pane lifts photographs over the rain (z 4, below). */
+.glass .photo-surface {
   z-index: 5;
 }
-
-
 
 /*
  * The gloss: a hard specular, and a faint wash around it.
@@ -1203,11 +1184,13 @@ span:has(> .photo-surface),
  *     on the dark tones (the reflection is added, so only darks can show it);
  *   - the edges catch a hairline glint.
  * Where the spot lies is the lamp's mirror point (--gloss-x/y, scene).
- */.photo-surface {
+ */
+.photo-surface {
   --gR: max(var(--tune-paper-core, 26px), var(--gloss-r, 0px));
   background:
     radial-gradient(
-      circle var(--tune-paper-reach, 340px) at var(--gloss-x, var(--lit-x, 50%)) var(--gloss-y, var(--lit-y, 50%)),
+      circle var(--tune-paper-reach, 340px) at var(--gloss-x, var(--lit-x, 50%))
+        var(--gloss-y, var(--lit-y, 50%)),
       rgba(255, 246, 232, var(--tune-paper-sheen, 0.16)) 0%,
       rgba(255, 240, 220, calc(var(--tune-paper-sheen, 0.16) * 0.4)) 45%,
       rgba(255, 255, 255, 0) 85%
@@ -1249,8 +1232,6 @@ span:has(> .photo-surface),
   filter: blur(0.4px);
 }
 
-
-
 /*
  * The room, far fainter than the pane's and shifted against it.
  *
@@ -1262,7 +1243,8 @@ span:has(> .photo-surface),
  * Same viewport anchoring as the pane's reflection so it stays one continuous
  * room, with the height difference added on top; and much smaller zoom, so
  * what it catches is a different fragment again.
- */.photo-surface::after {
+ */
+.photo-surface::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -1307,12 +1289,10 @@ span:has(> .photo-surface),
 }
 
 @media (prefers-reduced-motion: reduce) {
-.photo-surface {
+  .photo-surface {
     display: none;
   }
 }
-
-
 
 /* ---- What the pane has been touched with ---- */
 
@@ -1378,7 +1358,8 @@ span:has(> .photo-surface),
  *
  * They sit above the cursor for the same reason -- an afterimage is in front
  * of everything you can see, including the pointer.
- */.afterimage {
+ */
+.afterimage {
   position: fixed;
   pointer-events: none;
   opacity: 0;
@@ -1387,8 +1368,6 @@ span:has(> .photo-surface),
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
 }
-
-
 
 /*
  * What actually bleaches, and therefore what the ghost is made of.
@@ -1422,7 +1401,8 @@ span:has(> .photo-surface),
  * the fine detail dying while the coarse blob hangs on -- so DETAIL runs a
  * 0.55s time constant and RESIDUE runs 1.1s, and what is left at the end is a
  * shapeless stain rather than a small sharp picture.
- */.afterimage--negative {
+ */
+.afterimage--negative {
   z-index: 10000;
   mix-blend-mode: screen;
   filter: saturate(2.6) hue-rotate(180deg) brightness(0.92) contrast(2.3) blur(9px);
@@ -1447,13 +1427,12 @@ span:has(> .photo-surface),
   animation: afterimage-residue calc(var(--tune-after-dwell, 6.4s) * 1.25) linear both;
 }
 
-
-
 /*
  * The positive afterimage: the same highlights, still firing, still their own
  * colour. Gone inside half a second -- this is the receptors that have not
  * stopped responding yet, not the complement that follows.
- */.afterimage--positive {
+ */
+.afterimage--positive {
   z-index: 10001;
   mix-blend-mode: screen;
   filter: saturate(1.4) brightness(1) contrast(2.2) blur(4px);
@@ -1463,8 +1442,6 @@ span:has(> .photo-surface),
   animation: afterimage-positive 0.42s linear both;
   will-change: opacity;
 }
-
-
 
 /*
  * Veiling luminance: not a white flash, a loss of contrast.
@@ -1478,7 +1455,8 @@ span:has(> .photo-surface),
  * has to clear before the complement arrives, because a neutral white veil at
  * the same level as a coloured ghost simply cancels it -- measured, when the
  * two overlapped, as a flat grey lift with no hue at all.
- */.afterimage-veil {
+ */
+.afterimage-veil {
   position: fixed;
   inset: 0;
   z-index: 10002;
@@ -1496,8 +1474,6 @@ span:has(> .photo-surface),
   animation: afterimage-veil 1.2s linear both;
 }
 
-
-
 /* ---- The glass answering the flash ---- */
 
 /*
@@ -1506,7 +1482,8 @@ span:has(> .photo-surface),
  * Its own layer. The cursor's light lives in the shader now, and this has to
  * be able to run over a panel the cursor is nowhere near — the flash lights
  * the whole page at once.
- */.glass > .glass__glare {
+ */
+.glass > .glass__glare {
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -1520,22 +1497,19 @@ span:has(> .photo-surface),
   animation: glass-glare 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-
-
-/* The rim flaring to full, independent of where the cursor happens to be. */.glass[data-flash]::before {
+/* The rim flaring to full, independent of where the cursor happens to be. */
+.glass[data-flash]::before {
   animation: rim-flare 1s ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-.shutter-flash,
+  .shutter-flash,
   .shutter-frame,
   .afterimage,
   .afterimage-veil {
     display: none;
   }
 }
-
-
 
 /* ---- Iris ----
  *
@@ -1549,11 +1523,10 @@ span:has(> .photo-surface),
  * light comes through the opening.
  */
 
-/* While winding, the plain ring steps back so the blades are what reads. */.custom-cursor[data-winding] .custom-cursor__ring {
+/* While winding, the plain ring steps back so the blades are what reads. */
+.custom-cursor[data-winding] .custom-cursor__ring {
   opacity: 0.35;
 }
-
-
 
 /* ---- Winding glow ----
  *
@@ -1574,17 +1547,15 @@ span:has(> .photo-surface),
  * sense when the ring WAS the light. It is not any more: there is a shader
  * emitting and footage flaring, and a second glow drawn in CSS on top of them
  * only ever competed with both.
- */.custom-cursor__ring {
+ */
+.custom-cursor__ring {
 }
 
-
-
-/* The ring itself thickens and warms as it winds. */.custom-cursor[data-winding] .custom-cursor__ring {
+/* The ring itself thickens and warms as it winds. */
+.custom-cursor[data-winding] .custom-cursor__ring {
   border-color: color-mix(in oklab, #fff 55%, var(--amber));
   opacity: 1;
 }
-
-
 
 /* ---- Armed ----
  *
@@ -1598,12 +1569,11 @@ span:has(> .photo-surface),
  * inversion and drops the studio's accent on top of somebody's picture. No
  * animation either; the state is constant, so something that reads instantly
  * and then holds still says it better than something that keeps moving.
- */.custom-cursor[data-armed] .custom-cursor__ring {
+ */
+.custom-cursor[data-armed] .custom-cursor__ring {
   border-width: 2px;
   scale: 1.12;
 }
-
-
 
 /*
  * The aperture is not shown while armed.
@@ -1657,7 +1627,8 @@ span:has(> .photo-surface),
  * disappears into the page -- but only if it is actually blending with the
  * page. Moving the mode to the container is what puts the page in its
  * backdrop.
- */.flare-overlay {
+ */
+.flare-overlay {
   position: fixed;
   inset: 0;
   z-index: 9998;
@@ -1679,12 +1650,10 @@ span:has(> .photo-surface),
 }
 
 @media (prefers-reduced-motion: reduce) {
-.flare-overlay {
+  .flare-overlay {
     display: none;
   }
 }
-
-
 
 /*
  * Screen, not plus-lighter, and this is why the flare only ever showed itself
@@ -1706,7 +1675,8 @@ span:has(> .photo-surface),
  * nothing. It costs almost nothing where it already worked -- 0.595 against
  * 0.620 over the footer -- and it is the difference between an effect that
  * exists on one section and one that exists on the page.
- */.cursor-light {
+ */
+.cursor-light {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -1719,7 +1689,6 @@ span:has(> .photo-surface),
 }
 
 @layer fx-components {
-
   /*
    * Edge strips sized to the rim, NOT a full-size layer masked down to one.
    *
@@ -1747,7 +1716,8 @@ span:has(> .photo-surface),
    * Busy street through a wet window. Give it a photograph with actual point
    * sources in it and it has something to work with; give it an evenly lit
    * scene and it correctly does nothing.
-   */.glass > .glass__bokeh {
+   */
+  .glass > .glass__bokeh {
     position: absolute;
     inset: 0;
     border-radius: inherit;
@@ -1757,11 +1727,10 @@ span:has(> .photo-surface),
     mix-blend-mode: plus-lighter;
     opacity: 0.6;
   }
-.glass--bar > .glass__bokeh {
+  .glass--bar > .glass__bokeh {
     backdrop-filter: brightness(1.9) contrast(3) saturate(1.2) blur(9px);
     opacity: 0.45;
   }
-
 
   /*
    * ONE layer over the whole pane, not two strips at its edges.
@@ -1783,11 +1752,12 @@ span:has(> .photo-surface),
    * neither ever showed what it was built to show. The bend now happens in
    * the pane's own backdrop pass. Kept in the markup, hidden, so nothing that
    * queries for them breaks.
-   */.glass > .glass__refract,
+   */
+  .glass > .glass__refract,
   .glass > .glass__bokeh {
     display: none;
   }
-.glass > .glass__refract {
+  .glass > .glass__refract {
     position: absolute;
     inset: 0;
     border-radius: inherit;
@@ -1811,16 +1781,14 @@ span:has(> .photo-surface),
     backdrop-filter: blur(4px) brightness(1.1) saturate(1.35) contrast(1.08);
   }
 
-
   /*
    * Bars get a shallower bend: the profile is stretched over 64px rather than
    * a 400px band, so the same map would wrench them.
-   */.glass--bar > .glass__refract {
+   */
+  .glass--bar > .glass__refract {
     opacity: 0.55;
   }
 }
-
-
 
 /*
  * The shadow layer, between the photograph and the glass.
@@ -1829,7 +1797,8 @@ span:has(> .photo-surface),
  * layer can subtract — the WebGL passes composite `plus-lighter` and can only
  * ever add light, which is why the refraction had to move to a backdrop-filter
  * and why this had to become its own canvas.
- */.cast-shadows {
+ */
+.cast-shadows {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1847,14 +1816,13 @@ span:has(> .photo-surface),
   transition: opacity 0.25s ease;
 }
 
-
-
 /*
  * The other half of what the grime does. Dirt subtracts and scratches add, so
  * the darkening pass above cannot carry both — `multiply` has no way to make
  * anything brighter. This one composites `plus-lighter` and draws only the
  * scratch highlights.
- */.cast-caustics {
+ */
+.cast-caustics {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1864,8 +1832,6 @@ span:has(> .photo-surface),
   opacity: 0;
   transition: opacity 0.25s ease;
 }
-
-
 
 /*
  * The shutter firing with no flash behind it.
@@ -1891,7 +1857,8 @@ span:has(> .photo-surface),
  * mechanism and starts reading as a UI animation. The close is faster than
  * the reopen, which is also true of the real thing: a spring drives it shut
  * and the mechanism lets it back.
- */.custom-cursor__iris {
+ */
+.custom-cursor__iris {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1976,14 +1943,12 @@ span:has(> .photo-surface),
 }
 
 @media (prefers-reduced-motion: reduce) {
-.custom-cursor[data-click] .custom-cursor__iris,
+  .custom-cursor[data-click] .custom-cursor__iris,
   .custom-cursor[data-click] .custom-cursor__blade,
   .custom-cursor[data-click] .custom-cursor__ring {
     animation: none;
   }
 }
-
-
 
 /* ===================== Rasterised glass =====================
  *
@@ -2012,11 +1977,10 @@ span:has(> .photo-surface),
  * nothing drawn in their place -- clear, unfrosted glass with the light
  * painted over the sharp photograph (2j). The frost and the background
  * themselves come off in the `.glass[data-liquid]` rule above.
- */.glass[data-liquid]:not(.glass--bar):not(.glass-toggle) > .glass__refract {
+ */
+.glass[data-liquid]:not(.glass--bar):not(.glass-toggle) > .glass__refract {
   display: none;
 }
-
-
 
 /*
  * The library injects its canvas as a child of the pane. It has to sit under
@@ -2056,7 +2020,8 @@ span:has(> .photo-surface),
  * is for. Pressing it therefore changes what the button is made of as well as
  * what the site is made of, which is the most direct way to show a difference
  * that is hard to put into words.
- */.glass-toggle {
+ */
+.glass-toggle {
   position: relative;
   display: grid;
   place-items: center;
@@ -2091,10 +2056,9 @@ span:has(> .photo-surface),
   outline-offset: 3px;
 }
 
-
-
 /* Filled in raster, hollow in CSS -- the tell for when the two materials are
-   close enough that the disc alone does not say which is running. */.glass-toggle__pip {
+   close enough that the disc alone does not say which is running. */
+.glass-toggle__pip {
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 9999px;
@@ -2109,8 +2073,6 @@ span:has(> .photo-surface),
   background: var(--amber);
   box-shadow: 0 0 6px var(--amber);
 }
-
-
 
 /* ===================== The pane's own surface =====================
  *
@@ -2134,7 +2096,8 @@ span:has(> .photo-surface),
  * what tells you the edge is bright rather than merely pale -- and clipping it
  * to the pane would draw a hard line exactly where the glow should be softest.
  * `.glass` is position: relative with no overflow rule, so it spills.
- */.glass > .glass__surface {
+ */
+.glass > .glass__surface {
   position: absolute;
   inset: -90px;
   /* z-index: the compositor's (effects/engine/compositor PANE_LAYERS). */
@@ -2147,7 +2110,7 @@ span:has(> .photo-surface),
 }
 
 @media (prefers-reduced-motion: reduce) {
-.glass > .glass__surface,
+  .glass > .glass__surface,
   .glass-glow,
   .glass-bloom-received {
     display: none;
@@ -2155,13 +2118,11 @@ span:has(> .photo-surface),
 }
 
 @media (pointer: coarse), (hover: none) {
-.glass > .glass__surface,
+  .glass > .glass__surface,
   .glass-glow {
     display: none;
   }
 }
-
-
 
 /* ===================== The flash-ready lamp =====================
  *
@@ -2179,7 +2140,8 @@ span:has(> .photo-surface),
  * leaves the ring inverting the way it always has -- and without that switch a
  * red dot inside a difference group comes out teal over anything warm, which
  * is precisely the colour it must not be.
- */.custom-cursor[data-pilot] {
+ */
+.custom-cursor[data-pilot] {
   mix-blend-mode: normal;
   /*
    * In front of its own light. The lamp canvas (.cursor-light) shares z-index
@@ -2220,19 +2182,16 @@ span:has(> .photo-surface),
 }
 
 @media (prefers-reduced-motion: reduce) {
-.custom-cursor[data-pilot] .custom-cursor__dot {
+  .custom-cursor[data-pilot] .custom-cursor__dot {
     box-shadow: none;
   }
 }
 
-
-
-/* While the shutter is being wound by a held press: see shutter-charge.ts. */html.is-winding,
+/* While the shutter is being wound by a held press: see shutter-charge.ts. */
+html.is-winding,
 html.is-winding * {
   user-select: none;
 }
-
-
 
 /*
  * A seam band's layers, above the photographs that run on underneath it.
@@ -2247,16 +2206,16 @@ html.is-winding * {
  * its own stacking context (isolation: isolate), so only the pane moves; the
  * wrapper stays un-z-indexed so the backdrop-filter still sees the photograph
  * underneath (see SeamSection in PhotoSection).
- */[data-seam] > .bokeh-field,
+ */
+[data-seam] > .bokeh-field,
 [data-seam] > .transmitted,
 [data-seam] > .glass,
 [data-scene-content] > .glass {
   z-index: 1;
 }
 
-
-
-/* A spider's web in the hero's corner (SpiderWebs.tsx, task 75, ?try=webs): in front of the page. */.spider-web-layer {
+/* A spider's web in the hero's corner (SpiderWebs.tsx, task 75, ?try=webs): in front of the page. */
+.spider-web-layer {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -2265,9 +2224,8 @@ html.is-winding * {
   pointer-events: none;
 }
 
-
-
-/* Fireworks over the page (Fireworks.tsx, task 81, ?try=fireworks): light, screened on. */.fireworks-layer {
+/* Fireworks over the page (Fireworks.tsx, task 81, ?try=fireworks): light, screened on. */
+.fireworks-layer {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -2277,13 +2235,12 @@ html.is-winding * {
   mix-blend-mode: screen;
 }
 
-
-
 /* Party balloons in the room in front of the page (Balloons.tsx, task 74, ?try=balloons). */
 /*
  * The plastic buttons' rounded edges, lit by every light (PlasticBevel.tsx).
  * Under the balloons (they float in front of the page), over the page.
- */.plastic-bevel-layer {
+ */
+.plastic-bevel-layer {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -2292,9 +2249,8 @@ html.is-winding * {
   pointer-events: none;
 }
 
-
-
-/* The bevel's own curve mirrors the lights and the scene there: the 1 px drawn rim retires. */html[data-plastic-bevel] .plastic::after {
+/* The bevel's own curve mirrors the lights and the scene there: the 1 px drawn rim retires. */
+html[data-plastic-bevel] .plastic::after {
   display: none;
 }
 
@@ -2307,9 +2263,8 @@ html.is-winding * {
   pointer-events: none;
 }
 
-
-
-/* The light through the glass, on the photographs. See FloorLight.tsx. */.floor-light {
+/* The light through the glass, on the photographs. See FloorLight.tsx. */
+.floor-light {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -2319,14 +2274,13 @@ html.is-winding * {
 }
 
 @media (prefers-reduced-motion: reduce) {
-.floor-light {
+  .floor-light {
     display: none;
   }
 }
 
-
-
-/* The floor light drawn onto what stands above the page's floor canvas (FloorLight, 2m). */.floor-received {
+/* The floor light drawn onto what stands above the page's floor canvas (FloorLight, 2m). */
+.floor-received {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -2335,9 +2289,8 @@ html.is-winding * {
   pointer-events: none;
 }
 
-
-
-/* A pane's bloom laid over what stands above the glass's layers (GlassLight, item 51). */.glass-bloom-received {
+/* A pane's bloom laid over what stands above the glass's layers (GlassLight, item 51). */
+.glass-bloom-received {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -2348,17 +2301,16 @@ html.is-winding * {
 }
 
 @media (pointer: coarse), (hover: none) {
-.glass-bloom-received {
+  .glass-bloom-received {
     display: none;
   }
 }
 
-
-
 /*
  * The light under a pane, drawn inside it: above the glass's own render
  * (the frost, or the liquid canvas at -3), below its text. See FloorLight.
- */.glass > .glass__under,
+ */
+.glass > .glass__under,
 .glass > .glass__rainfall,
 .glass > .glass__water {
   position: absolute;
@@ -2369,19 +2321,16 @@ html.is-winding * {
   pointer-events: none;
 }
 
-
-
 /*
  * With the copy printed on the glass ("Type on the glass", Ony 2026-10-02),
  * the rain sits ON the letters: the water layer goes above the pane's
  * content, and draws the letters itself, bent, wherever it draws water
  * (effects/engine/type-layer; the water shader's typeAt). It is transparent
  * everywhere else, so the page's own letters show there.
- */.glass > .glass__water.glass__water--over-type {
+ */
+.glass > .glass__water.glass__water--over-type {
   z-index: 3 !important;
 }
-
-
 
 /*
  * The photographs lying on a pane float over the rain (Ony, 2026-10-10:
@@ -2389,7 +2338,8 @@ html.is-winding * {
  * on the glass the water layer rises over the pane's content (above), and
  * it took the photographs under it too. A photograph is a print laid on
  * the glass, not ink in it: it stays on top.
- */.glass
+ */
+.glass
   :is(img, video, canvas, .gallery-frame):not(.glass__water):not(.glass__surface):not(
     .glass__under
   ):not(.glass__rainfall) {
@@ -2400,7 +2350,6 @@ html.is-winding * {
   position: relative;
 }
 
-
 /*
  * A photograph's own z-index only counts inside its nearest stacking
  * context: a photo card lifted to z 2 for the cast shadows
@@ -2408,15 +2357,18 @@ html.is-winding * {
  * the water (3 where it lies over the copy) -- the rain landed on the
  * home page's photographs (Ony, 2026-10-10). The card carrying a
  * photograph goes up with it.
- */html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)) {
+ */
+html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)) {
   z-index: 4;
 }
 
-html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.absolute):not(.fixed):not(.sticky) {
+html
+  .glass
+  :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.absolute):not(.fixed):not(
+    .sticky
+  ) {
   position: relative;
 }
-
-
 
 /*
  * OFF, by request: the two remaining "flashlight" layers.
@@ -2432,10 +2384,10 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
  *
  * The code stays (the rules above). The light the lamp throws onto the
  * photographs is the floor-light pass (FloorLight), which is physical.
- */.transmitted {
+ */
+.transmitted {
   display: none;
 }
-
 
 /*
  * The photographs' gloss is back ON (Ony, 2026-10-11: "Photos have high
@@ -2455,17 +2407,16 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
  * Oversized by exactly as much as the largest slide these settings can make
  * (--view-scale, from oversizeFor), so it never shows an edge. Things
  * resting ON the glass are in its plane and do not move.
- */.view-shift {
+ */
+.view-shift {
   transform: translate(var(--view-x, 0px), var(--view-y, 0px)) scale(var(--view-scale, 1));
 }
 
 @media (prefers-reduced-motion: reduce), (max-width: 767px) {
-.view-shift {
+  .view-shift {
     transform: none;
   }
 }
-
-
 
 /* ===================== The magnifying glass (items 21, 25e; ?try=magnifier) =====================
  *
@@ -2474,7 +2425,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
  * --ring is its ring lamp (the lamp's charge), --lens-room the room's
  * brightness it mirrors, --lens-rx/ry where in the room it looks. Under the
  * cursor and the flash, over everything else.
- */.magnifier {
+ */
+.magnifier {
   position: fixed;
   top: 0;
   left: 0;
@@ -2505,13 +2457,12 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
     inset 0 0 0 1px rgb(255 255 255 / 0.18);
 }
 
-
-
 /*
  * The room, in the lens's face. A convex surface is a wide-angle mirror, so
  * it holds the whole room small, and it reflects as glass does: about 4%
  * straight on, rising steeply toward the rim (Fresnel).
- */.magnifier__lens::after {
+ */
+.magnifier__lens::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -2541,13 +2492,12 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   );
 }
 
-
-
 /*
  * The brass rim: turned metal, and metal is a coloured mirror -- what it
  * shows is the room, tinted gold, over the dark of the brass itself. Its
  * inner edge catches the ring lamp.
- */.magnifier__rim {
+ */
+.magnifier__rim {
   position: absolute;
   inset: -11px;
   border-radius: 50%;
@@ -2575,15 +2525,14 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   mask: radial-gradient(circle closest-side, transparent 89.6%, #000 90.2%);
 }
 
-
-
 /*
  * What the magnifier casts on the page, one per light (the room overhead,
  * the flash): the rim and the handle's shade, and the patch the lens gathers
  * the light it passes into. Placed, grown and softened by the one shadow
  * model; --shade is how much of the page's light the source is, --patch the
  * patch's size in the rim's footprint, --patch-gain how much it adds.
- */.magnifier-cast {
+ */
+.magnifier-cast {
   position: fixed;
   top: 0;
   left: 0;
@@ -2639,9 +2588,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   background: var(--patch-colour, white);
 }
 
-
-
-/* The handle: dark turned wood on a brass ferrule, down and to the right. */.magnifier__handle {
+/* The handle: dark turned wood on a brass ferrule, down and to the right. */
+.magnifier__handle {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -2666,14 +2614,13 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   background: linear-gradient(90deg, #6e4f1f, #d9b25e 35%, #f6e2a4 48%, #b48633 65%, #5a3f16);
 }
 
-
-
 /* ===================== The road flare (items 22, 25e; ?try=flare) =====================
  * components/site/FlareTorch draws the flare -- tube, smoke, flame, sparks --
  * on two canvases round the flame; its light on the scene is the light
  * list's. The first covers (the tube, the smoke's body); the second is light
  * and is screened onto the page.
- */.fire-torch {
+ */
+.fire-torch {
   /* The burning torch (FireTorch.tsx, task 82): moved to the hand by a transform. */
   position: fixed;
   left: 0;
@@ -2698,15 +2645,14 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   mix-blend-mode: screen;
 }
 
-
-
 /* ===================== Neon (items 23, 25c) =====================
  * components/site/Neon. One glass tube per word (claude/tools-research.md):
  * the tube layer is the glass, always there; the gas layer is the discharge,
  * faded by opacity as the tube flickers (composited, never repainted); the
  * plumbing is the blacked-out runs between letters and the electrode caps.
  * --neon-colour is the gas.
- */.neon {
+ */
+.neon {
   position: relative;
   display: inline-block;
   font-family: "Tilt Neon", var(--font-display, sans-serif);
@@ -2723,9 +2669,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   white-space: pre;
 }
 
-
-
-/* The glass tube: pale glass with the gas colour faint in it, a highlight along its top. */.neon__tube {
+/* The glass tube: pale glass with the gas colour faint in it, a highlight along its top. */
+.neon__tube {
   position: relative;
   z-index: 1;
   color: color-mix(in oklab, var(--neon-colour) 20%, rgb(214 218 228 / 0.34));
@@ -2734,14 +2679,13 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
     0 0.03em 0.02em rgb(0 0 0 / 0.35);
 }
 
-
-
 /*
  * The gas, burning: white-hot where the discharge is densest (the middle of
  * the tube), its colour toward the walls, and the glow it throws into the
  * air, fading over a hand's width. Static: the flicker is this layer's
  * opacity, not its styling.
- */.neon__gas {
+ */
+.neon__gas {
   position: absolute;
   inset: 0;
   z-index: 3;
@@ -2757,9 +2701,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   will-change: opacity;
 }
 
-
-
-/* The blacked-out runs and the electrodes: under the lit letters, over the wall. */.neon__plumbing {
+/* The blacked-out runs and the electrodes: under the lit letters, over the wall. */
+.neon__plumbing {
   position: absolute;
   left: 0;
   top: 0;
@@ -2773,9 +2716,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   stroke-linecap: round;
 }
 
-
-
-/* The painted glass still catches the room along its top. */.neon__run-glint {
+/* The painted glass still catches the room along its top. */
+.neon__run-glint {
   stroke: rgb(255 255 255 / 0.14);
   stroke-linecap: round;
 }
@@ -2790,9 +2732,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   fill: rgb(70 68 74);
 }
 
-
-
-/* The light the lit tube throws onto what it hangs on: a soft wash of its colour. */.neon__wash {
+/* The light the lit tube throws onto what it hangs on: a soft wash of its colour. */
+.neon__wash {
   position: absolute;
   inset: -45% -12%;
   z-index: 0;
@@ -2806,17 +2747,16 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
 }
 
 @media (prefers-reduced-motion: reduce) {
-.neon__gas {
+  .neon__gas {
     opacity: 1 !important;
   }
 }
 
-
-
 /* ===================== The tool tray (item 25e, ?try=tools) =====================
  * components/site/ToolTray: pick up one tool, putting down the last. A small
  * dark glass pill in the corner, out of the way of the photographs.
- */.tool-tray {
+ */
+.tool-tray {
   position: fixed;
   left: 16px;
   bottom: 16px;
@@ -2858,13 +2798,12 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   outline-offset: 2px;
 }
 
-
-
 /* ===================== The laser beam (item 25d, ?try=laser) =====================
  * components/site/LaserBeam: a canvas over the page the beam is drawn on,
  * added light (the canvas composites "lighter" within itself, and screens
  * onto the page).
- */.laser-beam {
+ */
+.laser-beam {
   position: fixed;
   inset: 0;
   z-index: 9992;
@@ -2874,13 +2813,12 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   mix-blend-mode: screen;
 }
 
-
-
 /* ===================== Glow-in-the-dark paint (item 25) =====================
  * components/site/GlowPaint: a board coated in phosphor paint. Unlit, the
  * paint is a pale grey-green film on it; lit, the canvas's glow is added on
  * top, soft, bleeding a little into the air.
- */.glow-paint {
+ */
+.glow-paint {
   position: relative;
   overflow: hidden;
   border-radius: 14px;
@@ -2913,14 +2851,13 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   pointer-events: none;
 }
 
-
-
 /*
  * The flashlight you hold (item 25i, components/site/Flashlight), seen from
  * above: a dark anodised body with a knurled grip, a wider head at the end
  * it points from, and the lit rim of its lens. Pointing straight down, all
  * that shows is the round tail cap with its rubber switch.
- */.flashlight {
+ */
+.flashlight {
   position: fixed;
   left: 0;
   top: 0;
@@ -2969,8 +2906,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
     0 0 18px 6px rgb(200 225 255 / 0.35);
 }
 
-
-/* Straight down: only the tail cap shows, round, with its switch. */.flashlight[data-down] {
+/* Straight down: only the tail cap shows, round, with its switch. */
+.flashlight[data-down] {
   border-radius: 50%;
   background:
     radial-gradient(circle at 50% 50%, #26282c 0 30%, transparent 32%),
@@ -2981,34 +2918,31 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   display: none;
 }
 
-
-
 /*
  * The lens's natural vignetting (?try=vignette, components/site/Vignette):
  * over the whole picture, under the cursor and its light.
- */.lens-vignette {
+ */
+.lens-vignette {
   position: fixed;
   inset: 0;
   z-index: 9000;
   pointer-events: none;
 }
 
-
-
 /*
  * The lighter tier (item 34, effects/engine/quality): the bokeh layer is a
  * second full-pane backdrop blur, the costliest thing a pane asks of the
  * compositor after its own frost.
- */:root[data-quality="lite"] .glass__bokeh {
+ */
+:root[data-quality="lite"] .glass__bokeh {
   display: none;
 }
-
-
 
 /*
  * Secret 2, the red room (item 39, ?try=redroom; components/site/RedRoom).
  * The negative under the safelight, with the loupe's hole at --lx/--ly.
- */.red-room {
+ */
+.red-room {
   position: fixed;
   inset: 0;
   z-index: 9000;
@@ -3067,8 +3001,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   cursor: pointer;
 }
 
-
-/* The print hanging to dry (item 40): a line, a cord, the sheet on its clip. */.red-room__line {
+/* The print hanging to dry (item 40): a line, a cord, the sheet on its clip. */
+.red-room__line {
   position: fixed;
   inset: 0;
   z-index: 9001;
@@ -3113,8 +3047,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   user-select: none;
 }
 
-
-/* The print under the safelight: paper white is the safelight's red. */.red-room__safe {
+/* The print under the safelight: paper white is the safelight's red. */
+.red-room__safe {
   position: absolute;
   inset: 0;
   padding: 10px;
@@ -3143,14 +3077,13 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   background: rgb(30 4 2);
 }
 
-
-
 /*
  * ---- The page under a black light (components/site/BlackLightScene,
  * docs/black-light.md) ----
  */
 
-/* The room, off: near black but for the UV's reach round the hand. */.blacklight-room {
+/* The room, off: near black but for the UV's reach round the hand. */
+.blacklight-room {
   position: fixed;
   inset: 0;
   z-index: 9989;
@@ -3164,9 +3097,8 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   );
 }
 
-
-
-/* The lamp's visible leak: a faint violet (365 nm) or a purple wash (395 nm), falling off with the UV. */.blacklight-leak {
+/* The lamp's visible leak: a faint violet (365 nm) or a purple wash (395 nm), falling off with the UV. */
+.blacklight-leak {
   position: fixed;
   inset: 0;
   z-index: 9989;
@@ -3179,26 +3111,23 @@ html .glass :is(a, button, figure, li):has(img, video):not(:has(.glass)):not(.ab
   );
 }
 
-
-
-/* The photographs as OBA prints: their luminance glowing brightener blue; the darks dark. */html[data-uv] img,
+/* The photographs as OBA prints: their luminance glowing brightener blue; the darks dark. */
+html[data-uv] img,
 html[data-uv] video {
   filter: url(#uv-paper);
 }
-
-
 
 /*
  * The photographs' darkening scrims and vignettes are the design's, not
  * paint on the print: under UV they stand down most of the way, or the
  * glowing whites come out grey through them (Ony: whites a very light blue).
- */html[data-uv] [data-photo] :is([data-scrim], .image-vignette) {
+ */
+html[data-uv] [data-photo] :is([data-scrim], .image-vignette) {
   opacity: 0.3;
 }
 
-
-
-/* Light type as white ink with brighteners: blue-white, glowing. Not the type on the buttons. */html[data-uv]
+/* Light type as white ink with brighteners: blue-white, glowing. Not the type on the buttons. */
+html[data-uv]
   :is(h1, h2, h3, h4, p, li, blockquote, .rich-text, a, label, span):not(.plastic, .plastic *) {
   /* White ink with brighteners goes a very light blue under UV (Ony's references). */
   /* OBA glow tokens (docs/research/uv-blacklight.md A): core #D9ECFF, body #8FB8FF, halo #4C63FF. */
@@ -3208,9 +3137,8 @@ html[data-uv] video {
     0 0 calc(16px * var(--uv-ink, 0.8)) rgb(76 99 255 / calc(0.6 * min(var(--uv-ink, 0.8), 1.2)));
 }
 
-
-
-/* The day-glo orange buttons blaze: brighter than reflection alone could make them, and glowing out. */html[data-uv] .plastic:not(.plastic--dark) {
+/* The day-glo orange buttons blaze: brighter than reflection alone could make them, and glowing out. */
+html[data-uv] .plastic:not(.plastic--dark) {
   /* Day-glo orange tokens: body #FF8A1F, core #FFE2B0, halo #FF5A0A. */
   background-color: #ff8a1f;
   background-image: radial-gradient(
@@ -3224,17 +3152,16 @@ html[data-uv] video {
     0 0 calc(44px * var(--uv-dayglo, 1)) calc(10px * var(--uv-dayglo, 1)) rgb(255 90 10 / 0.5);
 }
 
-
-
 /*
  * The drop page (routes/drop): one pane of glass over a photograph, the
  * whole screen, raining; the readout in a corner of the glass.
- */.drop-page {
+ */
+.drop-page {
   min-height: 100svh;
 }
 
-
-/* A pane bigger than the window, which the camera pans over (routes/drop PANE_SCALE). */.drop-page__scene {
+/* A pane bigger than the window, which the camera pans over (routes/drop PANE_SCALE). */
+.drop-page__scene {
   position: relative;
   /* 1.8 windows each way: room to roam, a third of the pixels 2.5 cost (the lag, 2026-10-10). */
   width: 180vw;
@@ -3250,8 +3177,8 @@ html[data-uv] video {
   object-fit: cover;
 }
 
-
-/* The whole window under the header (Ony, 2026-10-10). */.drop-page__pane {
+/* The whole window under the header (Ony, 2026-10-10). */
+.drop-page__pane {
   position: absolute;
   inset: var(--site-header-h, 64px) 0 0 0;
   border-radius: 0;
@@ -3310,7 +3237,6 @@ html[data-uv] video {
   cursor: pointer;
 }
 
-
 /* keyframes */
 @keyframes bokeh-drift {
   from {
@@ -3365,9 +3291,8 @@ html[data-uv] video {
   }
 }
 
-
-
-/* exp(-t/1.6s), sampled at 0.3 0.9 1.6 2.4 3.2 4.1 over a 5s span. */@keyframes afterimage-detail {
+/* exp(-t/1.6s), sampled at 0.3 0.9 1.6 2.4 3.2 4.1 over a 5s span. */
+@keyframes afterimage-detail {
   0% {
     opacity: 0;
   }
@@ -3394,9 +3319,8 @@ html[data-uv] video {
   }
 }
 
-
-
-/* exp(-t/3.2s), sampled at 0.55 1.4 2.4 3.6 5.0 6.5 over an 8s span. */@keyframes afterimage-residue {
+/* exp(-t/3.2s), sampled at 0.55 1.4 2.4 3.6 5.0 6.5 over an 8s span. */
+@keyframes afterimage-residue {
   0% {
     opacity: 0;
   }
@@ -3441,9 +3365,8 @@ html[data-uv] video {
   }
 }
 
-
-
-/* exp(-t/0.3s), sampled at 0.08 0.25 0.45 0.7 1.0 over a 1.2s span. */@keyframes afterimage-veil {
+/* exp(-t/0.3s), sampled at 0.08 0.25 0.45 0.7 1.0 over a 1.2s span. */
+@keyframes afterimage-veil {
   0% {
     opacity: 0;
   }
@@ -3548,9 +3471,8 @@ html[data-uv] video {
   }
 }
 
-
-
-/* The ring takes the shock of the blades slamming. */@keyframes cursor-shutter-ring {
+/* The ring takes the shock of the blades slamming. */
+@keyframes cursor-shutter-ring {
   0%,
   100% {
     transform: scale(1);
@@ -3559,4 +3481,3 @@ html[data-uv] video {
     transform: scale(0.82);
   }
 }
-

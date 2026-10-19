@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { fxAssetPath } from "../core/config";
 import { previewing } from "../engine/preview";
 import { addTask, ORDER } from "../engine/scheduler";
 import { beginPass, blitAll, buildProgram, endPass, onSharedGlLoss, sharedGl } from "../engine/gl";
@@ -596,7 +597,7 @@ export function WaterDrops() {
         task.wake();
       };
       img.onerror = () => console.error("lens lut failed");
-      img.src = "/water/drop-lens-lut.png";
+      img.src = fxAssetPath("/water/drop-lens-lut.png");
     };
     const lensBuffer = gl.createBuffer();
     // Development only: the lens map's state, for the rigs.

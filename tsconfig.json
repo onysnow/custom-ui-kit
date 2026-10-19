@@ -52,6 +52,9 @@
       ],
       "@onysnow/ui/*": [
         "./packages/ui/src/*"
+      ],
+      "@onysnow/fx/*": [
+        "./packages/fx/src/*"
       ]
     }
   }

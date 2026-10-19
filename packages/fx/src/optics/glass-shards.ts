@@ -1,3 +1,4 @@
+import { fxAssetPath } from "../core/config";
 import { regionLoops } from "./crack-photo";
 import type { Pt } from "./fracture";
 
@@ -25,7 +26,7 @@ export function loadShard(url: string): Promise<HTMLImageElement | null> {
     img.decoding = "async";
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
-    img.src = url;
+    img.src = fxAssetPath(url);
   });
   cache.set(url, job);
   return job;

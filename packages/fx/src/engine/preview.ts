@@ -14,7 +14,7 @@
  */
 
 /** What can be tried, and what each one is. */
-import { experimentsAllowed } from "../core/config";
+import { experimentsAllowed, getFxConfig } from "../core/config";
 
 export const PREVIEWS = {
   /** Scratches and smudges block and scatter in proportion to each pixel's opacity. */
@@ -121,9 +121,10 @@ function read(): ReadonlySet<string> {
   if (typeof window === "undefined") return new Set();
   let list: string[] = [];
   // Only for Ony signed in as the admin (item 48; lib/admin-gate).
+  const configured = getFxConfig().previews;
   if (!experimentsAllowed()) {
-    active = new Set(ON_BY_DEFAULT);
-    document.documentElement.dataset["try"] = ON_BY_DEFAULT.join(" ");
+    active = new Set([...ON_BY_DEFAULT, ...configured]);
+    document.documentElement.dataset["try"] = [...active].join(" ");
     return active;
   }
   try {
@@ -136,7 +137,7 @@ function read(): ReadonlySet<string> {
   }
   // And the ones switched on in the lab, which stay on in this browser (storedPreviews).
   for (const name of storedPreviews()) if (!list.includes(name)) list.push(name);
-  for (const name of ON_BY_DEFAULT) if (!list.includes(name)) list.push(name);
+  for (const name of [...ON_BY_DEFAULT, ...configured]) if (!list.includes(name)) list.push(name);
   active = new Set(list);
   if (list.length > 0) document.documentElement.dataset["try"] = list.join(" ");
   return active;

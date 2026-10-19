@@ -8,7 +8,7 @@ This directory is a verbatim copy of **[ybouane/liquidglass](https://github.com/
 Because we are going to change it. The whole reason this pipeline is here is
 that `backdrop-filter` cannot bend what is behind a pane — it can blur the
 backdrop or push it around, but it can never answer "what colour is the page at
-some *other* point", and that question is the whole of refraction. This library
+some _other_ point", and that question is the whole of refraction. This library
 answers it by rasterising the page into a texture and sampling that texture in
 a fragment shader.
 

@@ -1,5 +1,5 @@
 import type { GlassKind } from "./fracture";
-import { experimentsAllowed } from "../core/config";
+import { experimentsAllowed, fxAssetPath } from "../core/config";
 
 /**
  * Photographs of broken glass, one list per kind of break (item 10; Ony
@@ -45,5 +45,5 @@ export function crackPhotoFor(kind: GlassKind, seed: number): string | null {
   }
   const list = CRACK_PHOTOS[kind];
   if (!list.length) return null;
-  return list[Math.abs(Math.floor(seed)) % list.length]!;
+  return fxAssetPath(list[Math.abs(Math.floor(seed)) % list.length]!);
 }

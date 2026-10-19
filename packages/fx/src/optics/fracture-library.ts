@@ -1,3 +1,4 @@
+import { fxAssetPath } from "../core/config";
 /**
  * Real breaks, simulated offline, placed on a pane (broken glass B1;
  * docs/broken-glass-system.md 3.4).
@@ -280,7 +281,10 @@ export type LibraryIndex = Record<string, string[]>;
 
 const entries = new Map<string, Promise<BreakEntry | null>>();
 
-export function loadEntry(name: string, base = "/breaks/"): Promise<BreakEntry | null> {
+export function loadEntry(
+  name: string,
+  base = fxAssetPath("/breaks/"),
+): Promise<BreakEntry | null> {
   let p = entries.get(name);
   if (!p) {
     p = fetch(`${base}${name}.json`)

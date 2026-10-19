@@ -34,7 +34,8 @@
   },
   "dependencies": {
     "@onysnow/utils": "workspace:^",
-    "html-to-image": "^1.11.13"
+    "html-to-image": "^1.11.13",
+    "framer-motion": "^13.4.0"
   },
   "peerDependencies": {
     "@dimforge/rapier2d-compat": "0.21.0",
