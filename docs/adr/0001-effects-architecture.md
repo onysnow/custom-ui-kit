@@ -163,6 +163,11 @@ stops changing, which it has not.
 
 ## Implementation status (2026-10-19)
 
+**Scope note (Ony, 2026-10-19):** fireworks, cracked glass and spider webs are not finished components or systems, so
+they are not a focus. The shadow and gating work on them below is kept but treated as experimental: they are marked
+experimental in `FxStage`, absent from the docs site and its configuration, and not to be built on further until they
+are scoped.
+
 Done, with tests where the logic is pure:
 
 - [x] **Quality and reduced-motion gating.** `effectsEnabled()` (false at the `minimal` tier) now stands down balloons,
@@ -171,7 +176,7 @@ Done, with tests where the logic is pure:
       renderers get `lite`. This is a behaviour change for the portfolio and Private-ai when they migrate.
 - [x] **Layering enforced, with zero violations.** `bun run check:layers` (dependency-cruiser) runs in CI and fails on
       any import that points up the stack. The order is `core, engine, optics, materials, camera, secrets, tools,
-    light, adapters, passes, scene, water, balloons, fireworks, webs, react`. Getting to zero meant moving 17 modules
+  light, adapters, passes, scene, water, balloons, fireworks, webs, react`. Getting to zero meant moving 17 modules
       to the layer they belong in (nothing in `optics` imports `light`, `scene` or `materials` any more): the glass,
       floor and cursor-light shaders to a new `passes/` layer; `casters`, `crack-view`, `type-layer` and `scene-env` to
       `scene/`; `presets`, `blackbody`, the lamp beam and the room texture to `optics/`; `gl-loop` to `engine/`; and

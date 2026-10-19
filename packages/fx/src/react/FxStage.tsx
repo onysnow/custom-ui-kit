@@ -56,11 +56,11 @@ export type FxStageProps = {
   vignette?: boolean;
   /** Rain running down the glass. Needs `previews: ["drops"]` in configureFx. Default false. */
   rain?: boolean;
-  /** Party balloons drifting in the room (needs `previews: ["balloons"]`). Default false. */
+  /** EXPERIMENTAL, unfinished. Party balloons drifting in the room (needs `previews: ["balloons"]`). Default false. */
   balloons?: boolean;
-  /** A spider's web in the corner (needs `previews: ["webs"]`). Default false. */
+  /** EXPERIMENTAL, unfinished. A spider's web in the corner (needs `previews: ["webs"]`). Default false. */
   webs?: boolean;
-  /** Fireworks (needs `previews: ["fireworks"]`). Default false. */
+  /** EXPERIMENTAL, unfinished. Fireworks (needs `previews: ["fireworks"]`). Default false. */
   fireworks?: boolean;
   /** The camera-shaped cursor with the wind-up flash. Default false. */
   cursor?: boolean;

@@ -6,15 +6,5 @@ configureFx({
   // The library's textures, rooms and sounds are served from /fx (see tooling/fx-assets-plugin.ts).
   assetBase: "/fx",
   // Named effects that are allowed to run for every visitor, on top of the ones on by default.
-  previews: [
-    "drops",
-    "satin",
-    "balloons",
-    "webs",
-    "fireworks",
-    "blacklight",
-    "magnifier",
-    "flashlight",
-    "flare",
-  ],
+  previews: ["drops", "satin"],
 });
