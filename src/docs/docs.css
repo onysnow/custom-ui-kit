@@ -87,7 +87,8 @@ html[data-motion="calm"] .docs-backdrop__light {
   backdrop-filter: blur(14px);
 }
 
-.docs-prose h2 {
+/* Prose styles apply to the page's own text, never to the live demos inside it (hence the child combinators). */
+.docs-prose > h2 {
   font-family: var(--site-display);
   font-weight: 300;
   font-size: 1.85rem;
@@ -95,33 +96,36 @@ html[data-motion="calm"] .docs-backdrop__light {
   margin: 2.6rem 0 0.9rem;
   scroll-margin-top: 6rem;
 }
-.docs-prose h3 {
+.docs-prose > h3 {
   font-weight: 600;
   font-size: 1.1rem;
   margin: 1.8rem 0 0.6rem;
   scroll-margin-top: 6rem;
 }
-.docs-prose p,
-.docs-prose li {
+.docs-prose > p,
+.docs-prose > ul > li {
   color: var(--text-muted);
   line-height: 1.75;
 }
-.docs-prose p {
+.docs-prose > p {
   margin: 0.8rem 0;
 }
-.docs-prose ul {
+.docs-prose > ul {
   list-style: disc;
   padding-left: 1.3rem;
   margin: 0.8rem 0;
 }
-.docs-prose a:not([class]) {
+.docs-prose > ul.\!list-none {
+  list-style: none;
+}
+.docs-prose :where(p, li) a:not([class]) {
   color: var(--accent-1);
   text-underline-offset: 3px;
 }
-.docs-prose a:not([class]):hover {
+.docs-prose :where(p, li) a:not([class]):hover {
   text-decoration: underline;
 }
-.docs-prose code:not(pre code) {
+.docs-prose :where(p, li) code {
   font-family: var(--site-mono);
   font-size: 0.86em;
   padding: 0.12em 0.4em;

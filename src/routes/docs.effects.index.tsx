@@ -9,6 +9,12 @@ export const Route = createFileRoute("/docs/effects/")({
   component: EffectsIndex,
 });
 
+const CSS = `@layer theme, base, components, fx-components, utilities;
+@import "tailwindcss";
+@@source "../node_modules/@onysnow/fx/dist";
+/* follow your theme: */
+:root { --amber: var(--accent-1); --teal: var(--accent-2); }`;
+
 const SETUP = `import { configureFx } from "@onysnow/fx/core/config";
 import { FxStage } from "@onysnow/fx/react/FxStage";
 import "@onysnow/fx/styles/effects.css";
@@ -47,7 +53,8 @@ function EffectsIndex() {
           @layer theme, base, components, fx-components, utilities;
         </code>
       </p>
-      <CodeBlock code={SETUP} />
+      <CodeBlock code={CSS} lang="css" title="app.css" className="mb-4" />
+      <CodeBlock code={SETUP} title="root.tsx" />
 
       <h2 className="mb-5 mt-14 font-display text-3xl font-light">The effects</h2>
       <div className="grid gap-4 sm:grid-cols-2">
