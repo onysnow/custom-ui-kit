@@ -99,7 +99,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build:packages": "bun run --filter './packages/*' build",
+    "build:packages": "bun run --cwd packages/utils build && bun run --cwd packages/tokens build && bun run --cwd packages/ui build && bun run --cwd packages/fx build",
     "typecheck": "tsc --noEmit -p . && bun run --filter './packages/*' typecheck",
     "test": "bun run --filter './packages/*' test",
     "changeset": "changeset",
