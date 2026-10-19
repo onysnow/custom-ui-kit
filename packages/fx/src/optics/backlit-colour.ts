@@ -1,4 +1,4 @@
-import { blackbodyRgb } from "../light/blackbody";
+import { blackbodyRgb } from "./blackbody";
 import { t } from "../core/tuning";
 
 /** The "Backlight" knob's 1, in the glass shader's light units (set by eye against the lamp). */

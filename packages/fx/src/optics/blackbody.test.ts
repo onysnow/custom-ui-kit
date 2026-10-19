@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { resetPreviews } from "../engine/preview";
 import { tuning } from "../core/tuning";
 import { blackbodyRgb, planck } from "./blackbody";
-import { LAMP_COLOUR, cursorLamp } from "./lights";
+import { LAMP_COLOUR, cursorLamp } from "../light/lights";
 
 /*
  * Catalogue item 32: a light's colour from its temperature.

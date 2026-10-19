@@ -105,7 +105,7 @@
     "test": "bun run --filter './packages/*' test",
     "changeset": "changeset",
     "release": "bun run build:packages && changeset publish",
-    "check:layers": "depcruise packages/fx/src --config .dependency-cruiser.cjs --ignore-known .dependency-cruiser-known-violations.json"
+    "check:layers": "depcruise packages/fx/src --config .dependency-cruiser.cjs"
   },
   "private": true,
   "description": "Onysnow component library monorepo; the root app is the gallery/demo (Lovable-connected)",

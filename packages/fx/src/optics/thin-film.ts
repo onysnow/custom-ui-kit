@@ -40,7 +40,7 @@
  * linear sRGB, and white-balanced so the incoherent mean is neutral.
  */
 
-import type { Material } from "../materials/presets";
+import type { Material } from "./presets";
 
 /**
  * A face's rms roughness, nm. Float glass as it comes off the tin bath is

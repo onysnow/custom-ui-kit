@@ -13,7 +13,7 @@
  * Pure: the caller (components/site/BrokenGlass) walks the cracks and draws.
  */
 
-import { beamFactor, type Aim } from "../light/beam";
+import { beamFactor, type Aim } from "./lamp-beam";
 
 /** Glass's index. */
 export const N_GLASS = 1.518;

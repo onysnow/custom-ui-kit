@@ -9,8 +9,8 @@ import {
   reflectanceNormal,
 } from "./reflection";
 import { REFLECTION_GLSL } from "./reflection.glsl";
-import { FLOAT_GLASS } from "../materials/presets";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "./glass-light-shader";
+import { FLOAT_GLASS } from "./presets";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
 import { tuning } from "../core/tuning";
 
 /**

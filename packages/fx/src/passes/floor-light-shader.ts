@@ -1,12 +1,12 @@
-import { EDGE_PROFILE_GLSL } from "./edge-profile.glsl";
-import { REFLECTION_GLSL } from "./reflection.glsl";
-import { TRANSMISSION_GLSL } from "./transmission.glsl";
-import { MARKS_FADE_FROM, SURFACE_LAYERS_GLSL } from "./surface-layers.glsl";
-import { SHADOW_GLSL } from "./shadow.glsl";
-import { WAVINESS_GLSL } from "./waviness.glsl";
+import { EDGE_PROFILE_GLSL } from "../optics/edge-profile.glsl";
+import { REFLECTION_GLSL } from "../optics/reflection.glsl";
+import { TRANSMISSION_GLSL } from "../optics/transmission.glsl";
+import { MARKS_FADE_FROM, SURFACE_LAYERS_GLSL } from "../optics/surface-layers.glsl";
+import { SHADOW_GLSL } from "../optics/shadow.glsl";
+import { WAVINESS_GLSL } from "../optics/waviness.glsl";
 import { LIGHTS_GLSL } from "../light/light-uniforms";
-import { CASTERS_GLSL } from "./casters.glsl";
-import { SCRATCH_SHADOW, SMUDGE_EXTINCTION, SMUDGE_SCATTER } from "./surface-layers";
+import { CASTERS_GLSL } from "../optics/casters.glsl";
+import { SCRATCH_SHADOW, SMUDGE_EXTINCTION, SMUDGE_SCATTER } from "../optics/surface-layers";
 
 /**
  * The light that goes THROUGH the glass and lands on the photographs behind.

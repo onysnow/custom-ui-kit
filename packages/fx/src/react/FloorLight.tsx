@@ -3,7 +3,7 @@ import { roughRow } from "../optics/rough-transmission";
 import { unscattered } from "../optics/scatter";
 import { slab } from "../optics/stack";
 import { previewing } from "../engine/preview";
-import { casterList, MAX_CASTER_LAYERS, paintCasters } from "../optics/casters";
+import { casterList, MAX_CASTER_LAYERS, paintCasters } from "../scene/casters";
 import { roomFillOverride } from "../light/room-fill";
 import { useEffect, useRef, useState } from "react";
 
@@ -15,8 +15,8 @@ import {
   FLOOR_FRAGMENT_SHADER,
   FLOOR_VERTEX_SHADER,
   MAX_FLOOR_PANES,
-} from "../optics/floor-light-shader";
-import { sleepingLoop } from "../core/gl-loop";
+} from "../passes/floor-light-shader";
+import { sleepingLoop } from "../engine/gl-loop";
 import {
   beginPass,
   endPass,

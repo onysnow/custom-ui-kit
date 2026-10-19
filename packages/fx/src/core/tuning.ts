@@ -15,7 +15,7 @@
  */
 
 import { getGlassMode, onGlassMode } from "./glass-mode";
-import { DEFAULT_EDGE_WIDTH } from "../optics/edge-profile";
+import { DEFAULT_EDGE_WIDTH } from "./constants";
 
 export type Knob = {
   label: string;

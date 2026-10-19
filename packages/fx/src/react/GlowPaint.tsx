@@ -1,4 +1,4 @@
-import { beamFactor } from "../light/beam";
+import { beamFactor } from "../optics/lamp-beam";
 import { useEffect, useRef } from "react";
 import {
   FLASH_DECAY,

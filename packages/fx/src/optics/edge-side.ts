@@ -1,4 +1,4 @@
-import { FROSTED_FLOAT } from "../materials/presets";
+import { FROSTED_FLOAT } from "./presets";
 
 /**
  * A pane's edge, rebuilt from the reference photographs (optics plan step 8).

@@ -4,7 +4,7 @@ import { effectsEnabled } from "../engine/quality";
 import { addTask, ORDER } from "../engine/scheduler";
 import { beginPass, buildProgram, endPass, sharedGl } from "../engine/gl";
 import { pointLights, pointer, roomLight, type Light } from "../light/lights";
-import { sceneEnvironment } from "../light/scene-env";
+import { sceneEnvironment } from "../scene/scene-env";
 import { imageLights, R0 } from "../light/image-sources";
 import { glassGeometry } from "../scene/scene";
 import { camera } from "../camera/camera";

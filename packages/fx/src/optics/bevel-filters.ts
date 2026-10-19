@@ -1,6 +1,6 @@
 import { previewing } from "../engine/preview";
 import { bevelField } from "./bevel-map";
-import { FLOAT_GLASS } from "../materials/presets";
+import { FLOAT_GLASS } from "./presets";
 import { PANE_THICKNESS } from "./edge-side";
 
 /**

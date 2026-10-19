@@ -11,10 +11,10 @@ import {
   roomUv,
 } from "./environment";
 import { ENVIRONMENT_GLSL } from "./environment.glsl";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "./glass-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
 import { roomScript } from "../core/rooms";
 import { tuning } from "../core/tuning";
-import { FLOAT_GLASS, frontRoughness } from "../materials/presets";
+import { FLOAT_GLASS, frontRoughness } from "./presets";
 import { POLISHED_ROUGHNESS } from "./reflection";
 
 /**

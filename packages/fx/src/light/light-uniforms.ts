@@ -12,7 +12,7 @@
  * one trip round each loop per lit pixel.
  */
 
-import { BEAM_HOT, BEAM_SPILL, BEAM_SPILL_SHARE } from "./beam";
+import { BEAM_HOT, BEAM_SPILL, BEAM_SPILL_SHARE } from "../optics/lamp-beam";
 
 export const MAX_LIGHTS = 4;
 

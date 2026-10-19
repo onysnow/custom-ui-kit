@@ -16,7 +16,7 @@
  * the strength (that is the light's gain).
  */
 
-import { cie1931, xyzToRgb } from "../optics/thin-film";
+import { cie1931, xyzToRgb } from "./thin-film";
 
 const H = 6.62607015e-34;
 const C = 2.99792458e8;

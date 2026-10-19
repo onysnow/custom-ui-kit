@@ -152,14 +152,14 @@ stops changing, which it has not.
 
 ## Action Items
 
-1. [ ] Add the boundary check with the eight cycles allow-listed (no behaviour change).
-2. [ ] Fix the quality/reduced-motion gap first: gate `Balloons`, `SpiderWebs`, `Fireworks`, `PlasticBevel` and
+1. [x] Add the boundary check; it ended at zero violations, so nothing is allow-listed.
+2. [x] Fix the quality/reduced-motion gap first: gate `Balloons`, `SpiderWebs`, `Fireworks`, `PlasticBevel` and
        `BrokenGlass` on the tier. This is the smallest change that restores the not-load-bearing rule.
 3. [ ] Move the light-reading shaders into `passes/`; remove `optics -> light/scene/materials`.
 4. [ ] Introduce `defineEffect` and migrate effects one at a time; unify the caster and emitter registration paths.
 5. [ ] Replace the tuning singleton with `createTuning` + `FxProvider`.
 6. [ ] Port the Playwright specs and run them on software GL in CI.
-7. [ ] Ask Ony which of web, firework, plastic and cracked-glass shadows should be added (a look change).
+7. [x] Shadows for web, plastic and cracked glass (decided 2026-10-19); fireworks stay emitters.
 
 ## Implementation status (2026-10-19)
 
@@ -169,8 +169,15 @@ Done, with tests where the logic is pure:
       spider webs, fireworks, the plastic bevel and cracked glass. The quality tiers are on by default instead of
       behind a preview flag, so phones and visitors who prefer reduced motion get the quiet set, and software
       renderers get `lite`. This is a behaviour change for the portfolio and Private-ai when they migrate.
-- [x] **Layer boundary check.** `bun run check:layers` (dependency-cruiser) runs in CI. 22 existing violations are
-      recorded in `.dependency-cruiser-known-violations.json`; a new one fails the build (verified by adding one).
+- [x] **Layering enforced, with zero violations.** `bun run check:layers` (dependency-cruiser) runs in CI and fails on
+      any import that points up the stack. The order is `core, engine, optics, materials, camera, secrets, tools,
+    light, adapters, passes, scene, water, balloons, fireworks, webs, react`. Getting to zero meant moving 17 modules
+      to the layer they belong in (nothing in `optics` imports `light`, `scene` or `materials` any more): the glass,
+      floor and cursor-light shaders to a new `passes/` layer; `casters`, `crack-view`, `type-layer` and `scene-env` to
+      `scene/`; `presets`, `blackbody`, the lamp beam and the room texture to `optics/`; `gl-loop` to `engine/`; and
+      the preview names and the default edge width to `core/`. All 544 tests pass unchanged apart from two path
+      updates. Module paths changed, so deep imports like `@onysnow/fx/materials/presets` are now
+      `@onysnow/fx/optics/presets` (acceptable before the first release).
 - [x] **Shadows integrated.**
   - _Spider webs_ cast a shadow: the live thread network is a shape caster, rebuilt each frame (and emptied when out
     of view).
@@ -184,8 +191,8 @@ Done, with tests where the logic is pure:
       its interpolated strings, `framer-motion` is a peer, the docs `Knob` restores its knob, and `ui/resizable` is
       styled for react-resizable-panels v4.
 
-Still to do: move the light-reading shaders into a `passes/` layer, the `defineEffect` participant contract, replacing
-the tuning singleton, porting the Playwright specs, and the shadow visuals on a real GPU (see Consequences).
+Still to do: the `defineEffect` participant contract, replacing the tuning singleton, porting the Playwright specs, and
+confirming the new shadows on a real GPU (the unit-testable parts are covered; the pixels are not).
 
 **A finding while doing this.** The lamp is the camera cursor: it only lights while the shutter is wound (press and
 hold), and nothing sets its position unless `CustomCursor` is mounted. The docs site had no cursor mounted, so its lamp

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { behindGlassShift, eyeOffset, oversizeFor, scrollSlide } from "./viewpoint";
 import { tuning } from "../core/tuning";
-import { FLOOR_FRAGMENT_SHADER } from "./floor-light-shader";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "./glass-light-shader";
+import { FLOOR_FRAGMENT_SHADER } from "../passes/floor-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
 
 /**
  * The viewer's eye follows the pointer, and what is behind the glass slides

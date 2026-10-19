@@ -9,7 +9,7 @@ import {
 } from "./transmission";
 import { TRANSMISSION_GLSL } from "./transmission.glsl";
 import { REFLECTION_GLSL } from "./reflection.glsl";
-import { FLOOR_FRAGMENT_SHADER } from "./floor-light-shader";
+import { FLOOR_FRAGMENT_SHADER } from "../passes/floor-light-shader";
 import { tuning } from "../core/tuning";
 
 /**

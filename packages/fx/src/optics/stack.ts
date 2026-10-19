@@ -12,7 +12,7 @@
  * comes out of the same sums as the brightness.
  */
 
-import type { Material } from "../materials/presets";
+import type { Material } from "./presets";
 
 export type RGB = readonly [number, number, number];
 

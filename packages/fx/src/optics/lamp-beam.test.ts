@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { BEAM_HOT, BEAM_SPILL, BEAM_SPILL_SHARE, aimAt, beamFactor } from "./beam";
-import { LIGHTS_GLSL } from "./light-uniforms";
-import { pointLights, setTorch, torchLight } from "./lights";
+import { BEAM_HOT, BEAM_SPILL, BEAM_SPILL_SHARE, aimAt, beamFactor } from "./lamp-beam";
+import { LIGHTS_GLSL } from "../light/light-uniforms";
+import { pointLights, setTorch, torchLight } from "../light/lights";
 
 /*
  * Item 25i: a flashlight is a beam -- a hotspot and a spill -- not a glow.

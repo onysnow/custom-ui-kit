@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { rayleighRgb, scatterDepth, unscattered } from "./scatter";
-import { OPAL_GLASS, materialById } from "../materials/presets";
-import { FLOOR_FRAGMENT_SHADER } from "./floor-light-shader";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "./glass-light-shader";
+import { OPAL_GLASS, materialById } from "./presets";
+import { FLOOR_FRAGMENT_SHADER } from "../passes/floor-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
 
 /*
  * Catalogue item 32d: opal glass scatters in its volume, blue most.

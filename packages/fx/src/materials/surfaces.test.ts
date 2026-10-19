@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { SURFACE_MATERIALS, surfaceMaterial } from "./surfaces";
 import { fluorescenceOn } from "../adapters/css-vars";
-import { FROSTED_FLOAT } from "./presets";
+import { FROSTED_FLOAT } from "../optics/presets";
 
 /*
  * Item 25a: what glows under UV follows the research (claude/tools-research.md),

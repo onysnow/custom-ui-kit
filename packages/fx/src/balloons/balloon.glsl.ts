@@ -28,7 +28,7 @@
 
 import { ENVIRONMENT_GLSL } from "../optics/environment.glsl";
 import { SHAPE_GLSL } from "./shape";
-import { SCENE_ENV_GLSL } from "../light/scene-env";
+import { SCENE_ENV_GLSL } from "../scene/scene-env";
 import { CAMERA_MATCH_GLSL } from "../light/camera-match";
 
 export const MAX_BALLOON_LIGHTS = 4;

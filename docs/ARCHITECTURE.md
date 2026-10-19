@@ -25,6 +25,13 @@ packages, those edges would become cross-package cycles. So the effects live in 
 `secrets`, `tools`, `adapters`, `react`), every module is its own subpath (`@onysnow/fx/optics/edge-profile`), and
 `sideEffects: false` keeps unused ones out of a consumer's bundle. This is MUI's `@mui/material` shape.
 
+### Layering
+
+Folders may import only from the folders below them: `core, engine, optics, materials, camera, secrets, tools, light,
+adapters, passes, scene, water, balloons, fireworks, webs, react`. `bun run check:layers` enforces it in CI, and there
+are no exceptions. `optics` is pure maths and GLSL; `passes` are the shaders that read lights; `scene` knows the page.
+See `docs/adr/0001-effects-architecture.md`.
+
 ### The app seam: `configureFx`
 
 The effects used to import their host app (a Supabase-backed admin gate, a settings table for asset URLs). They now

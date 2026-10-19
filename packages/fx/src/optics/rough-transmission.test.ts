@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ROUGH_COSINES, roughAt, roughInterface, roughRow } from "./rough-transmission";
 import { fresnelExact, frostRoughness } from "./reflection";
 import { frostSpread } from "./transmission";
-import { FLOOR_FRAGMENT_SHADER } from "./floor-light-shader";
+import { FLOOR_FRAGMENT_SHADER } from "../passes/floor-light-shader";
 
 /*
  * Light engine step H (30b): a frosted face's transmission from its

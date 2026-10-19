@@ -22,7 +22,7 @@ import {
 import { EDGE_SIDE_GLSL } from "./edge-side.glsl";
 import { fresnelSchlick } from "./reflection";
 import { GLASS_THICKNESS } from "./bevel-filters";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "./glass-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
 import { tuning } from "../core/tuning";
 
 /**

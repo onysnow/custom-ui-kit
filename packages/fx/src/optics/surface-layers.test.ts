@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { SURFACE_LAYERS_GLSL } from "./surface-layers.glsl";
 import { SCRATCH_SHADOW, SMUDGE_EXTINCTION, SMUDGE_SCATTER } from "./surface-layers";
-import { FLOOR_FRAGMENT_SHADER } from "./floor-light-shader";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "./glass-light-shader";
+import { FLOOR_FRAGMENT_SHADER } from "../passes/floor-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
 
 /**
  * Optics step 9: the smudge and scratch layers feed the light through the

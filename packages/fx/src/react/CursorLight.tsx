@@ -1,10 +1,10 @@
 import { passScaleCap } from "../engine/quality";
 import { useEffect, useRef, useState } from "react";
-import { LIGHT_FRAGMENT_SHADER, LIGHT_VERTEX_SHADER } from "../optics/cursor-light-shader";
+import { LIGHT_FRAGMENT_SHADER, LIGHT_VERTEX_SHADER } from "../passes/cursor-light-shader";
 import { LAMP_COLOUR, cursorLamp, onCharge } from "../light/lights";
 import { lampSeen, onToolChange } from "../tools/held";
 import { camera } from "../camera/camera";
-import { sleepingLoop } from "../core/gl-loop";
+import { sleepingLoop } from "../engine/gl-loop";
 import {
   beginPass,
   endPass,

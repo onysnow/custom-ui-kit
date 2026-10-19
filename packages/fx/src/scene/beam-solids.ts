@@ -1,4 +1,4 @@
-import type { Material } from "../materials/presets";
+import type { Material } from "../optics/presets";
 import type { Vec } from "../optics/beam";
 
 /**

@@ -1,4 +1,4 @@
-import { addTask, ORDER } from "../engine/scheduler";
+import { addTask, ORDER } from "./scheduler";
 
 /**
  * A render loop that stops when there is nothing left to draw.

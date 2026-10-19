@@ -1,5 +1,5 @@
 import { PANE_THICKNESS } from "../optics/edge-side";
-import { MATERIAL_ATTR, materialById, type Material } from "./presets";
+import { MATERIAL_ATTR, materialById, type Material } from "../optics/presets";
 
 /**
  * A pane's own causes, as its element carries them (optics plan step 2).

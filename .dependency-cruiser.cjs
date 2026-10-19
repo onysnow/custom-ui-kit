@@ -1,21 +1,21 @@
 // Layering for @onysnow/fx: a folder may import from the folders below it, never above. The order is the design
-// (docs/adr/0001-effects-architecture.md). Violations that predate the rule are recorded in
-// .dependency-cruiser-known-violations.json; CI fails only on NEW ones, and the list only ever shrinks.
+// (docs/adr/0001-effects-architecture.md). There are no known violations: any import that points upward fails CI.
 const ORDER = [
   "core",
   "engine",
   "optics",
   "materials",
   "camera",
+  "secrets",
+  "tools",
   "light",
+  "adapters",
+  "passes",
   "scene",
   "water",
   "balloons",
   "fireworks",
   "webs",
-  "secrets",
-  "tools",
-  "adapters",
   "react",
 ];
 

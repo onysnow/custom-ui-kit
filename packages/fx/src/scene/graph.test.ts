@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { FROSTED_FLOAT } from "../materials/presets";
+import { FROSTED_FLOAT } from "../optics/presets";
 import type { PaneCauses } from "../materials/pane-causes";
 import { slab, solveStack } from "../optics/stack";
 import { placeStack, readInterface, SINGLE } from "./graph";

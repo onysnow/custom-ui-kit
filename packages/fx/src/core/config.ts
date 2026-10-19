@@ -10,7 +10,7 @@
  * Plain module state rather than React state for the same reason as the tuning registry: the loops that read it run
  * inside their own requestAnimationFrame callbacks, so routing it through a re-render would cost more than it saves.
  */
-import type { PreviewName } from "../engine/preview";
+import type { PreviewName } from "./previews";
 
 export type FxConfig = {
   /**

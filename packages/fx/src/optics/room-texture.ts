@@ -10,7 +10,7 @@
  * crack face, light piped along a pane).
  */
 
-import { decodeRadiance } from "../optics/environment";
+import { decodeRadiance } from "./environment";
 
 export type RoomTexture = {
   /** The texture, or null until it has loaded (then `wake` is called) or when the page has no room. */

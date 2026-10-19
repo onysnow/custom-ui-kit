@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { previewing } from "../engine/preview";
 import { effectsEnabled } from "../engine/quality";
 import { addEmitter, emitterChanged, makeEmitter, type Emitter } from "../light/lights";
-import { blackbodyRgb } from "../light/blackbody";
+import { blackbodyRgb } from "../optics/blackbody";
 import {
   CHEMISTRY,
   dragK,

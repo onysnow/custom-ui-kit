@@ -16,8 +16,8 @@ import {
   toneMapGlassBurn,
 } from "./edge-profile";
 import { EDGE_PROFILE_GLSL } from "./edge-profile.glsl";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "./glass-light-shader";
-import { FLOOR_FRAGMENT_SHADER } from "./floor-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
+import { FLOOR_FRAGMENT_SHADER } from "../passes/floor-light-shader";
 import { tuning } from "../core/tuning";
 
 /**
@@ -58,9 +58,9 @@ describe("one edge width", () => {
   it("leaves no private width in any effect", () => {
     const filters = source("./bevel-filters.ts");
     expect(filters).not.toMatch(/BEZEL_WIDTH\s*=/);
-    const glass = source("./glass-light-shader.ts");
+    const glass = source("../passes/glass-light-shader.ts");
     expect(glass).not.toMatch(/#define\s+Z_RADIUS/);
-    const floor = source("./floor-light-shader.ts");
+    const floor = source("../passes/floor-light-shader.ts");
     expect(floor).not.toMatch(/\buBevel\b/);
   });
 });

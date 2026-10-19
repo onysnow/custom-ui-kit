@@ -1,15 +1,15 @@
-import { EDGE_PROFILE_GLSL } from "./edge-profile.glsl";
-import { REFLECTION_GLSL } from "./reflection.glsl";
-import { EDGE_SIDE_GLSL } from "./edge-side.glsl";
-import { MARKS_FADE_FROM, SURFACE_LAYERS_GLSL } from "./surface-layers.glsl";
-import { ENVIRONMENT_GLSL } from "./environment.glsl";
-import { SHARD_MAP_GLSL } from "./shard-map";
+import { EDGE_PROFILE_GLSL } from "../optics/edge-profile.glsl";
+import { REFLECTION_GLSL } from "../optics/reflection.glsl";
+import { EDGE_SIDE_GLSL } from "../optics/edge-side.glsl";
+import { MARKS_FADE_FROM, SURFACE_LAYERS_GLSL } from "../optics/surface-layers.glsl";
+import { ENVIRONMENT_GLSL } from "../optics/environment.glsl";
+import { SHARD_MAP_GLSL } from "../optics/shard-map";
 import { LIGHTS_GLSL } from "../light/light-uniforms";
 import { LAMP_COLOUR } from "../light/lights";
-import { SHADOW_GLSL } from "./shadow.glsl";
-import { BOKEH_GLSL } from "./bokeh.glsl";
-import { BACKLIT_GLSL } from "./backlit.glsl";
-import { CONTACT_GAP_GLSL, FILM_LUT_MAX, FILM_LUT_SCALE } from "./thin-film";
+import { SHADOW_GLSL } from "../optics/shadow.glsl";
+import { BOKEH_GLSL } from "../optics/bokeh.glsl";
+import { BACKLIT_GLSL } from "../optics/backlit.glsl";
+import { CONTACT_GAP_GLSL, FILM_LUT_MAX, FILM_LUT_SCALE } from "../optics/thin-film";
 
 /**
  * Fragment shader for one pane of glass.

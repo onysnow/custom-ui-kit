@@ -22,8 +22,8 @@ import { previewing } from "../engine/preview";
 import { camera } from "../camera/camera";
 import { lampMode, onToolChange } from "../tools/held";
 import { flareFlickerAt } from "./flame";
-import type { Aim } from "./beam";
-import { blackbodyRgb } from "./blackbody";
+import type { Aim } from "../optics/lamp-beam";
+import { blackbodyRgb } from "../optics/blackbody";
 import { SAFELIGHT_COLOUR, onRedRoom, redRoomOn } from "../secrets/red-room";
 
 export type LightKind =

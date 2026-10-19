@@ -1,5 +1,5 @@
-import { POLISHED_ROUGHNESS, frostRoughness } from "../optics/reflection";
-import { MGF2_QUARTER_WAVE, type Coating } from "../optics/coating";
+import { POLISHED_ROUGHNESS, frostRoughness } from "./reflection";
+import { MGF2_QUARTER_WAVE, type Coating } from "./coating";
 
 /**
  * What the glass is made of, as data (optics plan step 2).

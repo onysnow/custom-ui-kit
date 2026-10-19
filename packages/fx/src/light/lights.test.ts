@@ -101,8 +101,8 @@ describe("the lights are the only source of light values", () => {
 describe("the passes loop over the lights", () => {
   it("glass and floor include the lights chunk once and read no single-lamp uniform", async () => {
     const { LIGHTS_GLSL } = await import("./light-uniforms");
-    const { GLASS_LIGHT_FRAGMENT_SHADER } = await import("../optics/glass-light-shader");
-    const { FLOOR_FRAGMENT_SHADER } = await import("../optics/floor-light-shader");
+    const { GLASS_LIGHT_FRAGMENT_SHADER } = await import("../passes/glass-light-shader");
+    const { FLOOR_FRAGMENT_SHADER } = await import("../passes/floor-light-shader");
     for (const src of [GLASS_LIGHT_FRAGMENT_SHADER, FLOOR_FRAGMENT_SHADER]) {
       expect(src.split(LIGHTS_GLSL).length - 1).toBe(1);
       expect(src).toMatch(/for \(int i = 0; i < MAX_LIGHTS; i\+\+\)/);
@@ -122,7 +122,7 @@ describe("the passes loop over the lights", () => {
 
   // Item 19: each light's floor in its own colour, not the first light's for all.
   it("the floor sums each light in its own colour", async () => {
-    const { FLOOR_FRAGMENT_SHADER } = await import("../optics/floor-light-shader");
+    const { FLOOR_FRAGMENT_SHADER } = await import("../passes/floor-light-shader");
     expect(FLOOR_FRAGMENT_SHADER).toContain("coloured += one.rgb * uLightColour[i];");
     expect(FLOOR_FRAGMENT_SHADER).not.toMatch(/vec3 warm = uLightColour\[0\];/);
   });
@@ -222,8 +222,8 @@ describe("line lights", () => {
   });
 
   it("are what both passes light from", async () => {
-    const { GLASS_LIGHT_FRAGMENT_SHADER } = await import("../optics/glass-light-shader");
-    const { FLOOR_FRAGMENT_SHADER } = await import("../optics/floor-light-shader");
+    const { GLASS_LIGHT_FRAGMENT_SHADER } = await import("../passes/glass-light-shader");
+    const { FLOOR_FRAGMENT_SHADER } = await import("../passes/floor-light-shader");
     expect(GLASS_LIGHT_FRAGMENT_SHADER).toContain(
       "vec2 lightXY = nearestOnLight(frag, uLightPos[i].xy, uLightSpan[i]);",
     );
@@ -243,7 +243,7 @@ describe("the physical falloff", () => {
   });
 
   it("is what the glass's fluorescence reads", async () => {
-    const { GLASS_LIGHT_FRAGMENT_SHADER } = await import("../optics/glass-light-shader");
+    const { GLASS_LIGHT_FRAGMENT_SHADER } = await import("../passes/glass-light-shader");
     expect(GLASS_LIGHT_FRAGMENT_SHADER).toContain("uvCos * uvCos * uvCos");
   });
 });

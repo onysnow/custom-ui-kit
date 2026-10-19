@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MATERIALS, type MaterialId } from "@onysnow/fx/materials/presets";
+import { MATERIALS, type MaterialId } from "@onysnow/fx/optics/presets";
 import { Pane } from "@onysnow/fx/react/Pane";
 import { Label } from "@onysnow/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@onysnow/ui/select";

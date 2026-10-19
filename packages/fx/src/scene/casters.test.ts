@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { castPoint, lampDiscAt } from "./casters";
-import { CASTERS_GLSL } from "./casters.glsl";
-import { FLOOR_FRAGMENT_SHADER } from "./floor-light-shader";
+import { CASTERS_GLSL } from "../optics/casters.glsl";
+import { FLOOR_FRAGMENT_SHADER } from "../passes/floor-light-shader";
 
 describe("shadows thrown onto the photographs, through the glass (item 52)", () => {
   const L = { x: 0, y: 0 };

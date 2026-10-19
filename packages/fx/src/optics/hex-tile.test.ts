@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { cellOffset, hexBlend, hexWeights } from "./hex-tile";
 import { HEX_TILE_GLSL } from "./hex-tile.glsl";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "./glass-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
 import { SITE_ASSETS } from "../core/assets";
 
 /**

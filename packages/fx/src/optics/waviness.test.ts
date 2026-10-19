@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { waveHessian, waveScale, waveSlope } from "./waviness";
 import { WAVINESS_GLSL } from "./waviness.glsl";
-import { FLOOR_FRAGMENT_SHADER } from "./floor-light-shader";
+import { FLOOR_FRAGMENT_SHADER } from "../passes/floor-light-shader";
 import { bevelField, interiorIsNeutral } from "./bevel-map";
 
 describe("waviness: one surface for the view and the light", () => {

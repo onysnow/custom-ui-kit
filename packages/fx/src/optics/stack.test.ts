@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { FROSTED_FLOAT } from "../materials/presets";
+import { FROSTED_FLOAT } from "./presets";
 import { addLayers, fresnel, fresnelSP, mean, slab, solveStack, type StackLayer } from "./stack";
 
 /*

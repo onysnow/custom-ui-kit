@@ -1,6 +1,6 @@
 import type { CSSProperties, ElementType, ReactNode } from "react";
 import { Glass } from "./Glass";
-import { DEFAULT_MATERIAL, MATERIAL_ATTR, type MaterialId } from "../materials/presets";
+import { DEFAULT_MATERIAL, MATERIAL_ATTR, type MaterialId } from "../optics/presets";
 import { GAP_ATTR, SCRATCH_ATTR, SMUDGE_ATTR, THICKNESS_ATTR } from "../materials/pane-causes";
 
 /**

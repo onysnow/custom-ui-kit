@@ -6,7 +6,7 @@ import {
   FROSTED_FLOAT,
   MATERIAL_ATTR,
   materialById,
-} from "./presets";
+} from "../optics/presets";
 import { readPaneCauses } from "./pane-causes";
 import { reflectanceNormal } from "../optics/reflection";
 import { PANE_THICKNESS, SIDE_ABSORB, sideWidth } from "../optics/edge-side";

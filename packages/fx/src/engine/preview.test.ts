@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "../optics/glass-light-shader";
-import { FLOOR_FRAGMENT_SHADER } from "../optics/floor-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
+import { FLOOR_FRAGMENT_SHADER } from "../passes/floor-light-shader";
 import { previewing, resetPreviews } from "./preview";
 
 afterEach(() => resetPreviews());

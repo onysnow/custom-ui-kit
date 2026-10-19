@@ -12,11 +12,15 @@
 import { beginPass, buildProgram, endPass, fullScreenTriangle, sharedGl } from "../engine/gl";
 import type { PhotoTextures } from "../engine/photo-texture";
 import type { PaneLook } from "../engine/pane-look";
-import type { RoomTexture } from "../engine/room-texture";
-import type { GlassRect } from "../scene/scene";
-import type { Crack, Fracture } from "./fracture";
-import { bakeField, bakeTable, segmentsOf, TABLE_WIDTH } from "./crack-field";
-import { CRACK_VIEW_FRAGMENT, CRACK_VIEW_VERTEX, MAX_CRACK_LIGHTS } from "./crack-view.glsl";
+import type { RoomTexture } from "../optics/room-texture";
+import type { GlassRect } from "./scene";
+import type { Crack, Fracture } from "../optics/fracture";
+import { bakeField, bakeTable, segmentsOf, TABLE_WIDTH } from "../optics/crack-field";
+import {
+  CRACK_VIEW_FRAGMENT,
+  CRACK_VIEW_VERTEX,
+  MAX_CRACK_LIGHTS,
+} from "../optics/crack-view.glsl";
 
 /** What the pass needs of a break: its cracks (with arrival times when simulated) and where it was struck. */
 export type CrackViewBreak = Pick<Fracture, "impact"> & { cracks: (Crack & { t?: number[] })[] };

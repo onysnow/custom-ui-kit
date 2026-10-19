@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { aimAt, type Aim } from "../light/beam";
+import { aimAt, type Aim } from "../optics/lamp-beam";
 import { pointer, setTorch, torchLight } from "../light/lights";
 
 /** The torch's body, seen from above: length and width, CSS px. */

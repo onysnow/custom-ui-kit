@@ -52,8 +52,8 @@
  */
 
 import { SURFACE_MATERIALS, type SurfaceMaterial } from "../materials/surfaces";
-import { shapeCasterList, type ShapeCaster } from "./shape-casters";
-import { glassGeometry, litSurfaceList } from "../scene/scene";
+import { shapeCasterList, type ShapeCaster } from "../optics/shape-casters";
+import { glassGeometry, litSurfaceList } from "./scene";
 import { t } from "../core/tuning";
 
 /**

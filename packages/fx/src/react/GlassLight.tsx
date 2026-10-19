@@ -3,8 +3,8 @@ import { coatingRgb } from "../optics/coating";
 import { onShardMapChange, shardMapOf, shardMapStamp } from "../optics/shard-map";
 import { scatterDepth } from "../optics/scatter";
 import { useEffect, useState } from "react";
-import { LIGHT_VERTEX_SHADER } from "../optics/cursor-light-shader";
-import { sleepingLoop } from "../core/gl-loop";
+import { LIGHT_VERTEX_SHADER } from "../passes/cursor-light-shader";
+import { sleepingLoop } from "../engine/gl-loop";
 import {
   beginPass,
   endPass,
@@ -13,7 +13,7 @@ import {
   onSharedGlLoss,
   sharedGl,
 } from "../engine/gl";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "../optics/glass-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
 import {
   glassGeometry,
   geometryStamp,
@@ -40,7 +40,7 @@ import { SURFACE_MATERIALS } from "../materials/surfaces";
 import { lightLocations, type PackedLight, uploadLights } from "../light/light-uniforms";
 import { paneCanvas } from "../engine/compositor";
 import { onTuningApplied, t } from "../core/tuning";
-import { FROSTED_FLOAT, frontRoughness } from "../materials/presets";
+import { FROSTED_FLOAT, frontRoughness } from "../optics/presets";
 import { faceRoughnessNm, filmLut } from "../optics/thin-film";
 import { ROOM_KNEE, roomMipChain } from "../optics/environment";
 import { camera } from "../camera/camera";

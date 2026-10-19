@@ -8,7 +8,7 @@ import {
   shardNormal,
   slabShift,
 } from "./shard-map";
-import { GLASS_LIGHT_FRAGMENT_SHADER } from "./glass-light-shader";
+import { GLASS_LIGHT_FRAGMENT_SHADER } from "../passes/glass-light-shader";
 
 const deg = Math.PI / 180;
 

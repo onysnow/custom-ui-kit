@@ -12,8 +12,8 @@
  * spacing and colour, where the page put it.
  */
 
-import { wordsOf } from "../optics/casters";
-import { litSurfaceList } from "../scene/scene";
+import { wordsOf } from "./casters";
+import { litSurfaceList } from "./scene";
 
 /*
  * The buttons and icons printed on the glass too (Ony, 2026-10-03: "make sure

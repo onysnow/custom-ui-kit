@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { MGF2_QUARTER_WAVE, coatedReflectance, coatingRgb } from "./coating";
-import { MUSEUM_GLASS, materialById } from "../materials/presets";
+import { MUSEUM_GLASS, materialById } from "./presets";
 
 /*
  * Catalogue item 32c: a quarter wave of magnesium fluoride on float glass.

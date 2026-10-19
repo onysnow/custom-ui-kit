@@ -31,7 +31,8 @@
  * liquid glass library's own default for the same quantity (its zRadius), so
  * the two renderers start from the same physical edge.
  */
-export const DEFAULT_EDGE_WIDTH = 40;
+export { DEFAULT_EDGE_WIDTH } from "../core/constants";
+import { DEFAULT_EDGE_WIDTH } from "../core/constants";
 
 /** The attribute a pane carries its own edge width in, in CSS pixels. */
 export const EDGE_WIDTH_ATTR = "data-edge-width";

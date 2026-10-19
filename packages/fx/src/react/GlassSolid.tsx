@@ -12,7 +12,7 @@ import { ENVIRONMENT_GLSL } from "../optics/environment.glsl";
 import { SOLID_SHAPES, type SolidShape } from "../optics/solids";
 import { castOf, smoothCast } from "../optics/solid-cast";
 import { indexAt } from "../optics/dispersion";
-import { materialById, type MaterialId } from "../materials/presets";
+import { materialById, type MaterialId } from "../optics/presets";
 import { cursorLamp, onLightChange, roomLight } from "../light/lights";
 import { viewState } from "../scene/scene";
 import { camera } from "../camera/camera";

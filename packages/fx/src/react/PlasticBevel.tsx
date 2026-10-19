@@ -3,7 +3,7 @@ import { effectsEnabled } from "../engine/quality";
 import { addTask, ORDER } from "../engine/scheduler";
 import { beginPass, buildProgram, endPass, sharedGl } from "../engine/gl";
 import { pointLights } from "../light/lights";
-import { sceneEnvironment, SCENE_ENV_GLSL } from "../light/scene-env";
+import { sceneEnvironment, SCENE_ENV_GLSL } from "../scene/scene-env";
 import { camera } from "../camera/camera";
 
 /**

@@ -23,7 +23,7 @@
  * Only images that can be read back (CORS) are used, each loaded once as
  * an anonymous-CORS copy; one that cannot be is left out, not tainting.
  */
-import { glassGeometry } from "../scene/scene";
+import { glassGeometry } from "./scene";
 
 /** The texture's size: the viewport squeezed into 512 x 256 (blurred heavily, its aspect does not matter). */
 const ENV_W = 512;
