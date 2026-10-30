@@ -362,7 +362,6 @@ export function LiquidMetal({
   ...rest
 }: LiquidMetalProps) {
   const boxRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   // Live values read by the render loop, so slider changes never rebuild the GL context.
   const params = useRef({
     dispersion,
@@ -386,15 +385,20 @@ export function LiquidMetal({
   };
 
   useEffect(() => {
-    const canvas = canvasRef.current;
     const box = boxRef.current;
-    if (!canvas || !box) return;
+    if (!box) return;
+    // A fresh canvas per effect run: the context is released on cleanup, and a released context
+    // cannot be revived on the same element (React re-runs effects in development).
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.className = "absolute inset-0 block h-full w-full";
     const gl = canvas.getContext("webgl", {
       premultipliedAlpha: true,
       alpha: true,
       antialias: true,
     });
     if (!gl) return;
+    box.appendChild(canvas);
 
     const vs = compile(gl, gl.VERTEX_SHADER, VERTEX);
     const fs = compile(gl, gl.FRAGMENT_SHADER, FRAGMENT);
@@ -574,6 +578,7 @@ export function LiquidMetal({
       gl.deleteShader(vs);
       gl.deleteShader(fs);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
+      canvas.remove();
     };
   }, [src, padding]);
 
@@ -586,9 +591,7 @@ export function LiquidMetal({
       className={cn("relative h-full w-full", className)}
       style={style}
       {...rest}
-    >
-      <canvas ref={canvasRef} className="absolute inset-0 block h-full w-full" />
-    </div>
+    />
   );
 }
 

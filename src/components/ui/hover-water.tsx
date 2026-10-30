@@ -3,37 +3,53 @@ import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Hover Water: an image or a background video becomes a water surface. The pointer (mouse or
- * finger) drags through it and leaves physics-based ripples that refract the picture, split its
- * colours at the wave fronts and catch a specular glint.
+ * Hover Water: an image or a background video becomes a liquid surface. The pointer (mouse or
+ * finger) stirs it; the wake swirls, breaks up and lingers, refracting the picture, splitting its
+ * colours and catching glints.
  *
- * Our own WebGL implementation:
- * - a height field simulated on two ping-pong float framebuffers (discrete wave equation:
- *   next = (sum of 4 neighbours / 2 - previous) * damping), two sub-steps per frame;
- * - the pointer is splatted as a capsule from its previous to its current position, so fast
- *   strokes leave a continuous wake rather than a dotted line;
- * - the display pass turns the height gradient into a surface normal, offsets the media lookup
- *   by it (refraction), reads red, green and blue at different offsets (chromatic aberration) and
- *   adds a highlight where the surface faces the light.
+ * Our own WebGL2 stable-fluids solver (semi-Lagrangian advection, vorticity confinement, Jacobi
+ * pressure projection) running on half-float framebuffers:
+ *
+ *   per frame: curl -> vorticity confinement -> divergence -> pressure (N Jacobi iterations)
+ *              -> subtract pressure gradient -> advect velocity -> advect "dye"
+ *
+ * The dye is not a colour: it carries a displacement vector (rg) and an intensity (b). The pointer
+ * splats its own velocity into the velocity field and its stroke direction into the dye, so the
+ * flow drags the displacement around and tears it into eddies. The display pass offsets the media
+ * lookup by that displacement plus the live velocity (refraction), reads red, green and blue at
+ * different offsets (chromatic aberration) and lights the slopes of the disturbed surface (glints).
+ *
+ * Defaults follow the settings of the public preview (real-result-504144.framer.app: curl 40,
+ * pressure iterations 50, pressure dissipation 0, velocity dissipation 99, splat radius 3,
+ * refraction 100, chromatic aberration 100, highlight 200), mapped onto this solver's units and
+ * tuned against captures of the same pointer stroke.
  */
 export interface HoverWaterProps extends Omit<React.ComponentProps<"div">, "children"> {
-  /** Image or video URL shown under the water. */
+  /** Image or video URL shown under the liquid. */
   src?: string;
   /** "image" or "video". Inferred from the file extension when left out. */
   mediaType?: "image" | "video";
   /** Accessible description of the media. Empty string marks it decorative. */
   alt?: string;
-  /** How far the cursor pushes the surface (0 to 2). */
-  rippleStrength?: number;
-  /** Radius of the cursor's splash, in CSS pixels. */
-  rippleSize?: number;
-  /** How long ripples live: 0.9 dies fast, 0.995 rings for seconds. */
-  damping?: number;
-  /** How strongly waves bend the picture (0 to 2). */
-  refraction?: number;
-  /** Colour split at the wave fronts (0 to 2). */
+  /** Vorticity confinement: how hard the wake curls into eddies (0 to 80). */
+  curl?: number;
+  /** Jacobi iterations of the pressure solve (more = more incompressible swirl, more GPU). */
+  pressureIterations?: number;
+  /** Share of last frame's pressure kept as the solver's starting guess (0 to 1). */
+  pressureDissipation?: number;
+  /** Share of the velocity kept per 60 fps frame (0.9 stops fast, 0.995 keeps drifting). */
+  velocityDissipation?: number;
+  /** Share of the distortion ("dye") kept per 60 fps frame: how long the wake lingers. */
+  dyeDissipation?: number;
+  /** Pointer splat radius, in % of the box's shorter side. */
+  splatRadius?: number;
+  /** How much of the pointer's speed is pushed into the liquid. */
+  splatForce?: number;
+  /** How strongly the disturbed liquid bends the picture (0 to 3). */
+  distortion?: number;
+  /** Colour split in the distorted areas (0 to 3). */
   chromaticAmount?: number;
-  /** Specular glint on the wave crests (0 to 2). */
+  /** Glints on the disturbed surface (0 to 3). */
   highlight?: number;
   /** Media fit inside the box. */
   fit?: "cover" | "contain";
@@ -45,9 +61,9 @@ export interface HoverWaterProps extends Omit<React.ComponentProps<"div">, "chil
 const DEFAULT_IMAGE =
   "https://framerusercontent.com/images/2exoQxYNf3YECaAWoYDz4CfJQPI.png?scale-down-to=2048";
 
-/** The simulation runs at a fraction of the CSS size: waves look the same and cost a quarter. */
-const SIM_SCALE = 0.6;
-const SIM_MAX = 800;
+/** Longest side of the velocity grid and of the dye (distortion) grid, in cells. */
+const VELOCITY_RES = 192;
+const DYE_RES = 768;
 
 const VERTEX = `#version 300 es
 in vec2 a_pos;
@@ -57,58 +73,132 @@ void main() {
   gl_Position = vec4(a_pos, 0.0, 1.0);
 }`;
 
-/** Wave step plus pointer splat. r = height now, g = height one step ago. */
-const SIM = `#version 300 es
+/** Shared header: neighbour lookups for the grid passes. */
+const GRID = `#version 300 es
 precision highp float;
 in vec2 v_uv;
 out vec4 o;
-uniform sampler2D u_state;
 uniform vec2 u_texel;
-uniform float u_damping;
-uniform vec2 u_from;      // splat capsule in sim pixels
-uniform vec2 u_to;
-uniform float u_radius;   // sim pixels
-uniform float u_amount;   // 0 when the pointer is away
-uniform vec2 u_seed;      // changes every frame: the chop pattern never repeats
+vec2 L() { return v_uv - vec2(u_texel.x, 0.0); }
+vec2 R() { return v_uv + vec2(u_texel.x, 0.0); }
+vec2 B() { return v_uv - vec2(0.0, u_texel.y); }
+vec2 T() { return v_uv + vec2(0.0, u_texel.y); }
+`;
 
+/** Adds a soft blob around the pointer. Velocity: pointer velocity. Dye: stroke direction. */
+const SPLAT = `${GRID}
+uniform sampler2D u_target;
+uniform vec2 u_point;     // uv
+uniform vec3 u_value;
+uniform float u_radius;   // uv, measured along y
+uniform float u_aspect;   // width / height
+uniform float u_chop;     // 0 for velocity, > 0 breaks the dye splat into droplets
+uniform vec2 u_seed;
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
   p += dot(p, p + 45.32);
   return fract(p.x * p.y);
 }
-
 void main() {
-  vec4 s = texture(u_state, v_uv);
-  float sum = texture(u_state, v_uv + vec2(u_texel.x, 0.0)).r
-            + texture(u_state, v_uv - vec2(u_texel.x, 0.0)).r
-            + texture(u_state, v_uv + vec2(0.0, u_texel.y)).r
-            + texture(u_state, v_uv - vec2(0.0, u_texel.y)).r;
-  float next = (sum * 0.5 - s.g) * u_damping;
-
-  if (u_amount > 0.0) {
-    vec2 px = v_uv / u_texel;
-    vec2 seg = u_to - u_from;
-    float h = clamp(dot(px - u_from, seg) / max(dot(seg, seg), 1e-4), 0.0, 1.0);
-    float d = length(px - u_from - seg * h) / u_radius;
-    // Dome pushed down (the cursor presses the water), broken up by a moving cell noise so the
-    // wake is choppy like a hand dragged through water, not one smooth trough.
-    float dome = (1.0 - smoothstep(0.0, 1.0, d));
-    vec2 c = px * (1.6 / u_radius) + u_seed;
-    float chop = hash(floor(c)) * 0.9 + 0.55 * hash(floor(c * 2.3 + 7.1));
-    next -= u_amount * dome * dome * (0.35 + chop);
-  }
-  o = vec4(clamp(next, -4.0, 4.0), s.r, 0.0, 1.0);
+  vec2 d = v_uv - u_point;
+  d.x *= u_aspect;
+  float g = exp(-dot(d, d) / (u_radius * u_radius));
+  vec2 cell = floor((v_uv * vec2(u_aspect, 1.0)) / (u_radius * 0.6) + u_seed);
+  float chop = mix(1.0, 0.75 + 0.5 * hash(cell), u_chop);
+  o = texture(u_target, v_uv) + vec4(u_value * g * chop, 0.0);
 }`;
 
-const DISPLAY = `#version 300 es
-precision highp float;
-in vec2 v_uv;
-out vec4 o;
-uniform sampler2D u_state;
+/** Semi-Lagrangian advection: fetch the value that flowed here during dt. */
+const ADVECT = `${GRID}
+uniform sampler2D u_velocity;
+uniform sampler2D u_source;
+uniform vec2 u_velTexel;  // velocity is stored in velocity-grid cells per second
+uniform float u_dt;
+uniform float u_keep;
+void main() {
+  vec2 back = v_uv - u_dt * texture(u_velocity, v_uv).xy * u_velTexel;
+  o = u_keep * texture(u_source, back);
+}`;
+
+const CURL = `${GRID}
+uniform sampler2D u_velocity;
+void main() {
+  float c = texture(u_velocity, R()).y - texture(u_velocity, L()).y
+          - texture(u_velocity, T()).x + texture(u_velocity, B()).x;
+  o = vec4(0.5 * c, 0.0, 0.0, 1.0);
+}`;
+
+/** Vorticity confinement: push the flow around its eddies so they survive the coarse grid. */
+const VORTICITY = `${GRID}
+uniform sampler2D u_velocity;
+uniform sampler2D u_curl;
+uniform float u_curlStrength;
+uniform float u_dt;
+void main() {
+  float cl = texture(u_curl, L()).x;
+  float cr = texture(u_curl, R()).x;
+  float cb = texture(u_curl, B()).x;
+  float ct = texture(u_curl, T()).x;
+  float c = texture(u_curl, v_uv).x;
+  vec2 f = 0.5 * vec2(abs(ct) - abs(cb), abs(cr) - abs(cl));
+  f /= length(f) + 1e-4;
+  f *= u_curlStrength * c;
+  f.y = -f.y;
+  vec2 v = texture(u_velocity, v_uv).xy + f * u_dt;
+  o = vec4(clamp(v, -1000.0, 1000.0), 0.0, 1.0);
+}`;
+
+const DIVERGENCE = `${GRID}
+uniform sampler2D u_velocity;
+void main() {
+  float l = texture(u_velocity, L()).x;
+  float r = texture(u_velocity, R()).x;
+  float b = texture(u_velocity, B()).y;
+  float t = texture(u_velocity, T()).y;
+  vec2 c = texture(u_velocity, v_uv).xy;
+  // Solid walls: the velocity reflects at the border.
+  if (L().x < 0.0) l = -c.x;
+  if (R().x > 1.0) r = -c.x;
+  if (B().y < 0.0) b = -c.y;
+  if (T().y > 1.0) t = -c.y;
+  o = vec4(0.5 * (r - l + t - b), 0.0, 0.0, 1.0);
+}`;
+
+const SCALE = `${GRID}
+uniform sampler2D u_source;
+uniform float u_value;
+void main() { o = u_value * texture(u_source, v_uv); }`;
+
+const PRESSURE = `${GRID}
+uniform sampler2D u_pressure;
+uniform sampler2D u_divergence;
+void main() {
+  float l = texture(u_pressure, L()).x;
+  float r = texture(u_pressure, R()).x;
+  float b = texture(u_pressure, B()).x;
+  float t = texture(u_pressure, T()).x;
+  float div = texture(u_divergence, v_uv).x;
+  o = vec4(0.25 * (l + r + b + t - div), 0.0, 0.0, 1.0);
+}`;
+
+const GRADIENT_SUBTRACT = `${GRID}
+uniform sampler2D u_pressure;
+uniform sampler2D u_velocity;
+void main() {
+  float l = texture(u_pressure, L()).x;
+  float r = texture(u_pressure, R()).x;
+  float b = texture(u_pressure, B()).x;
+  float t = texture(u_pressure, T()).x;
+  vec2 v = texture(u_velocity, v_uv).xy - 0.5 * vec2(r - l, t - b);
+  o = vec4(v, 0.0, 1.0);
+}`;
+
+const DISPLAY = `${GRID}
+uniform sampler2D u_dye;
+uniform sampler2D u_velocity;
 uniform sampler2D u_media;
-uniform vec2 u_texel;
 uniform vec2 u_mediaScale;  // fit: media uv = (uv - 0.5) * scale + 0.5
-uniform float u_refraction;
+uniform float u_distortion;
 uniform float u_chroma;
 uniform float u_highlight;
 uniform vec3 u_bg;
@@ -116,36 +206,34 @@ uniform float u_ready;
 
 vec3 media(vec2 uv) {
   vec2 m = (uv - 0.5) * u_mediaScale + 0.5;
-  if (m.x < 0.0 || m.y < 0.0 || m.x > 1.0 || m.y > 1.0 || u_ready < 0.5) return u_bg;
+  if (u_ready < 0.5) return u_bg;
+  // Mirror at the edges so strong offsets never reveal a seam.
+  m = 1.0 - abs(1.0 - mod(m, 2.0));
   return texture(u_media, vec2(m.x, 1.0 - m.y)).rgb;
+}
+float height(vec2 uv) {
+  vec3 d = texture(u_dye, uv).xyz;
+  return length(d.xy) * 3.5 + d.z * 0.4;
 }
 
 void main() {
-  float hl = texture(u_state, v_uv - vec2(u_texel.x, 0.0)).r;
-  float hr = texture(u_state, v_uv + vec2(u_texel.x, 0.0)).r;
-  float hd = texture(u_state, v_uv - vec2(0.0, u_texel.y)).r;
-  float hu = texture(u_state, v_uv + vec2(0.0, u_texel.y)).r;
-  vec2 grad = vec2(hr - hl, hu - hd);
-
-  // Refraction: look through the tilted surface. Offset in uv, roughly 3% of the frame per unit
-  // of slope at refraction 1.
-  vec2 off = grad * 0.03 * u_refraction;
-  // Chromatic aberration: red bends least, blue most, like light through water.
-  float c = u_chroma * 0.35;
+  vec3 dye = texture(u_dye, v_uv).xyz;
+  vec2 vel = texture(u_velocity, v_uv).xy;
+  // Refraction offset: the advected displacement plus a share of the live flow.
+  vec2 off = (dye.xy + vel * 0.00004) * u_distortion;
+  float c = 0.12 * u_chroma;
   vec3 col;
-  col.r = media(v_uv + off * (1.0 - c)).r;
-  col.g = media(v_uv + off).g;
-  col.b = media(v_uv + off * (1.0 + c)).b;
+  col.r = media(v_uv - off * (1.0 + c)).r;
+  col.g = media(v_uv - off).g;
+  col.b = media(v_uv - off * (1.0 - c)).b;
 
-  // Specular glint: surface normal against a light from the top left.
-  vec3 n = normalize(vec3(-grad * 2.2, 1.0));
-  vec3 l = normalize(vec3(-0.45, 0.6, 1.0));
-  vec3 hv = normalize(l + vec3(0.0, 0.0, 1.0));
-  float slope = length(grad);
-  float spec = pow(max(dot(n, hv), 0.0), 36.0) * smoothstep(0.03, 0.3, slope);
-  // Glancing light on steep crests: thin white crinkles that read even over black media.
-  float sheen = smoothstep(0.25, 1.2, slope) * 0.35;
-  col += (spec * 0.8 + sheen) * u_highlight;
+  // Glints: light the slopes of the disturbed surface; strongest on the broken-up edges.
+  vec2 grad = vec2(height(R()) - height(L()), height(T()) - height(B()));
+  vec3 n = normalize(vec3(-grad * 3.0, 1.0));
+  vec3 h = normalize(normalize(vec3(-0.45, 0.6, 1.0)) + vec3(0.0, 0.0, 1.0));
+  float spec = pow(max(dot(n, h), 0.0), 40.0) * smoothstep(0.02, 0.15, length(grad));
+  float rim = smoothstep(0.08, 0.5, length(grad)) * 0.03;
+  col += (spec * 0.35 + rim) * u_highlight;
   o = vec4(col, 1.0);
 }`;
 
@@ -159,7 +247,9 @@ function hexToRgb(hex: string): [number, number, number] {
   return m ? [channel(m[1]), channel(m[2]), channel(m[3])] : [0, 0, 0];
 }
 
-function program(gl: WebGL2RenderingContext, fragment: string) {
+type Program = { program: WebGLProgram; u: (name: string) => WebGLUniformLocation | null };
+
+function makeProgram(gl: WebGL2RenderingContext, fragment: string): Program {
   const make = (type: number, source: string) => {
     const s = gl.createShader(type)!;
     gl.shaderSource(s, source);
@@ -170,26 +260,38 @@ function program(gl: WebGL2RenderingContext, fragment: string) {
   };
   const vs = make(gl.VERTEX_SHADER, VERTEX);
   const fs = make(gl.FRAGMENT_SHADER, fragment);
-  const p = gl.createProgram()!;
-  gl.attachShader(p, vs);
-  gl.attachShader(p, fs);
-  gl.bindAttribLocation(p, 0, "a_pos");
-  gl.linkProgram(p);
+  const program = gl.createProgram()!;
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.bindAttribLocation(program, 0, "a_pos");
+  gl.linkProgram(program);
   gl.deleteShader(vs);
   gl.deleteShader(fs);
-  return p;
+  const cache = new Map<string, WebGLUniformLocation | null>();
+  const u = (name: string) => {
+    if (!cache.has(name)) cache.set(name, gl.getUniformLocation(program, name));
+    return cache.get(name) ?? null;
+  };
+  return { program, u };
 }
+
+type Target = { tex: WebGLTexture; fbo: WebGLFramebuffer; w: number; h: number };
+type Pair = { read: Target; write: Target; swap: () => void };
 
 export function HoverWater({
   src = DEFAULT_IMAGE,
   mediaType,
   alt = "",
-  rippleStrength = 1,
-  rippleSize = 22,
-  damping = 0.985,
-  refraction = 1,
+  curl = 40,
+  pressureIterations = 50,
+  pressureDissipation = 0,
+  velocityDissipation = 0.99,
+  dyeDissipation = 0.985,
+  splatRadius = 3,
+  splatForce = 1,
+  distortion = 1,
   chromaticAmount = 1,
-  highlight = 1,
+  highlight = 2,
   fit = "cover",
   background = "#000000",
   className,
@@ -197,41 +299,44 @@ export function HoverWater({
   ...rest
 }: HoverWaterProps) {
   const boxRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const video = mediaType ? mediaType === "video" : isVideo(src);
-  const params = useRef({
-    rippleStrength,
-    rippleSize,
-    damping,
-    refraction,
-    chromaticAmount,
-    highlight,
-    fit,
-    background,
-  });
-  params.current = {
-    rippleStrength,
-    rippleSize,
-    damping,
-    refraction,
+  const live = {
+    curl,
+    pressureIterations,
+    pressureDissipation,
+    velocityDissipation,
+    dyeDissipation,
+    splatRadius,
+    splatForce,
+    distortion,
     chromaticAmount,
     highlight,
     fit,
     background,
   };
+  // Read by the render loop, so changing a prop never rebuilds the GL context.
+  const params = useRef(live);
+  params.current = live;
 
   useEffect(() => {
-    const canvas = canvasRef.current;
     const box = boxRef.current;
-    if (!canvas || !box) return;
+    if (!box) return;
+    // A fresh canvas per effect run: the context is released on cleanup, and a released context
+    // cannot be revived on the same element (React re-runs effects in development).
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.className = "absolute inset-0 block h-full w-full";
     const gl = canvas.getContext("webgl2", { antialias: false, alpha: false });
-    // Float render targets are needed for a stable wave equation; without them, show the media
-    // plainly (the <noscript>-like fallback below is the CSS background).
-    if (!gl || !gl.getExtension("EXT_color_buffer_float")) return;
-    const linearFloat = !!gl.getExtension("OES_texture_float_linear");
+    if (!gl) return;
 
-    const simProg = program(gl, SIM);
-    const dispProg = program(gl, DISPLAY);
+    // Half-float render targets: EXT_color_buffer_float, else EXT_color_buffer_half_float.
+    // Without either the solver cannot run; the CSS background then shows the plain media.
+    const halfFloat =
+      !!gl.getExtension("EXT_color_buffer_float") ||
+      !!gl.getExtension("EXT_color_buffer_half_float");
+    if (!halfFloat) return;
+    box.appendChild(canvas);
+
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
     const buffer = gl.createBuffer();
@@ -239,57 +344,82 @@ export function HoverWater({
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-    const su = (n: string) => gl.getUniformLocation(simProg, n);
-    const du = (n: string) => gl.getUniformLocation(dispProg, n);
-    const simLoc = {
-      state: su("u_state"),
-      texel: su("u_texel"),
-      damping: su("u_damping"),
-      from: su("u_from"),
-      to: su("u_to"),
-      radius: su("u_radius"),
-      amount: su("u_amount"),
-      seed: su("u_seed"),
-    };
-    const dispLoc = {
-      state: du("u_state"),
-      media: du("u_media"),
-      texel: du("u_texel"),
-      mediaScale: du("u_mediaScale"),
-      refraction: du("u_refraction"),
-      chroma: du("u_chroma"),
-      highlight: du("u_highlight"),
-      bg: du("u_bg"),
-      ready: du("u_ready"),
+
+    const progs = {
+      splat: makeProgram(gl, SPLAT),
+      advect: makeProgram(gl, ADVECT),
+      curl: makeProgram(gl, CURL),
+      vorticity: makeProgram(gl, VORTICITY),
+      divergence: makeProgram(gl, DIVERGENCE),
+      scale: makeProgram(gl, SCALE),
+      pressure: makeProgram(gl, PRESSURE),
+      gradient: makeProgram(gl, GRADIENT_SUBTRACT),
+      display: makeProgram(gl, DISPLAY),
     };
 
-    // Ping-pong height field.
-    type Target = { tex: WebGLTexture; fbo: WebGLFramebuffer };
-    let targets: Target[] = [];
-    let simW = 0;
-    let simH = 0;
-    let cssToSim = SIM_SCALE;
-    const makeTargets = (w: number, h: number) => {
-      targets.forEach((t) => {
+    const targets: Target[] = [];
+    const makeTarget = (w: number, h: number, internal: number, format: number): Target => {
+      const tex = gl.createTexture()!;
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, internal, w, h, 0, format, gl.HALF_FLOAT, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      const fbo = gl.createFramebuffer()!;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+      gl.viewport(0, 0, w, h);
+      gl.clearColor(0, 0, 0, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      const t = { tex, fbo, w, h };
+      targets.push(t);
+      return t;
+    };
+    const makePair = (w: number, h: number, internal: number, format: number): Pair => {
+      const pair = {
+        read: makeTarget(w, h, internal, format),
+        write: makeTarget(w, h, internal, format),
+        swap() {
+          const r = pair.read;
+          pair.read = pair.write;
+          pair.write = r;
+        },
+      };
+      return pair;
+    };
+    const freeTargets = () => {
+      targets.splice(0).forEach((t) => {
         gl.deleteTexture(t.tex);
         gl.deleteFramebuffer(t.fbo);
       });
-      targets = [0, 1].map(() => {
-        const tex = gl.createTexture()!;
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, w, h, 0, gl.RGBA, gl.HALF_FLOAT, null);
-        const filter = linearFloat ? gl.LINEAR : gl.NEAREST;
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        const fbo = gl.createFramebuffer()!;
-        gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-        gl.clearColor(0, 0, 0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        return { tex, fbo };
-      });
+    };
+
+    let fields: {
+      velocity: Pair;
+      dye: Pair;
+      pressure: Pair;
+      divergence: Target;
+      curl: Target;
+    } | null = null;
+    const gridSize = (max: number) => {
+      const aspect = canvas.width / canvas.height;
+      return aspect >= 1
+        ? { w: max, h: Math.max(2, Math.round(max / aspect)) }
+        : { w: Math.max(2, Math.round(max * aspect)), h: max };
+    };
+    const buildFields = () => {
+      freeTargets();
+      const v = gridSize(VELOCITY_RES);
+      const cssMax = Math.max(box.clientWidth, box.clientHeight);
+      const d = gridSize(Math.min(DYE_RES, Math.max(64, Math.round(cssMax * 0.75))));
+      fields = {
+        velocity: makePair(v.w, v.h, gl.RG16F, gl.RG),
+        dye: makePair(d.w, d.h, gl.RGBA16F, gl.RGBA),
+        pressure: makePair(v.w, v.h, gl.R16F, gl.RED),
+        divergence: makeTarget(v.w, v.h, gl.R16F, gl.RED),
+        curl: makeTarget(v.w, v.h, gl.R16F, gl.RED),
+      };
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     };
 
@@ -342,20 +472,18 @@ export function HoverWater({
       img.src = src;
     }
 
+    let cssW = 1;
+    let cssH = 1;
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const cw = Math.max(1, box.clientWidth);
-      const ch = Math.max(1, box.clientHeight);
-      canvas.width = Math.round(cw * dpr);
-      canvas.height = Math.round(ch * dpr);
-      cssToSim = Math.min(SIM_SCALE, SIM_MAX / Math.max(cw, ch));
-      const w = Math.max(2, Math.round(cw * cssToSim));
-      const h = Math.max(2, Math.round(ch * cssToSim));
-      if (w !== simW || h !== simH) {
-        simW = w;
-        simH = h;
-        makeTargets(w, h);
-      }
+      cssW = Math.max(1, box.clientWidth);
+      cssH = Math.max(1, box.clientHeight);
+      const w = Math.round(cssW * dpr);
+      const h = Math.round(cssH * dpr);
+      if (w === canvas.width && h === canvas.height && fields) return;
+      canvas.width = w;
+      canvas.height = h;
+      buildFields();
     };
     resize();
     const ro = new ResizeObserver(() => {
@@ -364,124 +492,210 @@ export function HoverWater({
     });
     ro.observe(box);
 
-    // Pointer in sim pixels (y up). `prev` gives the capsule start for this frame's splat.
-    const pointer = { x: 0, y: 0, px: 0, py: 0, inside: false, moved: false };
+    // Pointer: positions in uv (y up); splats are queued as segments so a fast stroke is not
+    // a dotted line.
+    type Splat = { x: number; y: number; dx: number; dy: number };
+    const queue: Splat[] = [];
+    const pointer = { x: 0, y: 0, inside: false };
     const onMove = (e: PointerEvent) => {
       const r = box.getBoundingClientRect();
-      const x = (e.clientX - r.left) * cssToSim;
-      const y = (r.height - (e.clientY - r.top)) * cssToSim;
-      if (!pointer.inside) {
-        pointer.px = x;
-        pointer.py = y;
+      const x = (e.clientX - r.left) / r.width;
+      const y = 1 - (e.clientY - r.top) / r.height;
+      if (pointer.inside) {
+        const dx = x - pointer.x;
+        const dy = y - pointer.y;
+        // Spread long moves over several splats at most ~a radius apart.
+        const stepUv = Math.max(0.004, (params.current.splatRadius / 100) * 0.6);
+        const len = Math.hypot(dx * (r.width / r.height), dy);
+        const n = Math.min(12, Math.max(1, Math.ceil(len / stepUv)));
+        for (let i = 1; i <= n; i++) {
+          queue.push({
+            x: pointer.x + (dx * i) / n,
+            y: pointer.y + (dy * i) / n,
+            dx: dx / n,
+            dy: dy / n,
+          });
+        }
       }
       pointer.x = x;
       pointer.y = y;
       pointer.inside = true;
-      pointer.moved = true;
       kick();
     };
     const onLeave = () => {
       pointer.inside = false;
     };
-    box.addEventListener("pointermove", onMove);
-    box.addEventListener("pointerdown", onMove);
-    box.addEventListener("pointerleave", onLeave);
-    box.addEventListener("pointercancel", onLeave);
     // A lifted finger stops stirring; a mouse keeps hovering.
     const onUp = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") onLeave();
     };
+    box.addEventListener("pointermove", onMove);
+    box.addEventListener("pointerdown", onMove);
+    box.addEventListener("pointerleave", onLeave);
+    box.addEventListener("pointercancel", onLeave);
     box.addEventListener("pointerup", onUp);
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let raf = 0;
-    let running = false;
-    let visible = true;
-    let quiet = 0; // frames without input; the loop sleeps once the water has settled
-    let current = 0;
-
-    const step = () => {
-      const p = params.current;
-      gl.useProgram(simProg);
-      gl.viewport(0, 0, simW, simH);
-      gl.uniform2f(simLoc.texel, 1 / simW, 1 / simH);
-      gl.uniform1f(simLoc.damping, Math.min(0.999, Math.max(0.5, p.damping)));
-      gl.uniform1f(simLoc.radius, Math.max(1.5, p.rippleSize * cssToSim));
-      gl.uniform1i(simLoc.state, 0);
-      // Two sub-steps per frame: waves travel two sim pixels per frame. The splat is spread over
-      // both halves of the stroke.
-      const splat = pointer.inside && pointer.moved && !reduced.matches;
-      for (let i = 0; i < 2; i++) {
-        const a = i / 2;
-        const b = (i + 1) / 2;
-        gl.uniform2f(
-          simLoc.from,
-          pointer.px + (pointer.x - pointer.px) * a,
-          pointer.py + (pointer.y - pointer.py) * a,
-        );
-        gl.uniform2f(
-          simLoc.to,
-          pointer.px + (pointer.x - pointer.px) * b,
-          pointer.py + (pointer.y - pointer.py) * b,
-        );
-        gl.uniform1f(simLoc.amount, splat ? 0.45 * p.rippleStrength : 0);
-        gl.uniform2f(simLoc.seed, Math.random() * 97, Math.random() * 97);
-        const src = targets[current];
-        const dst = targets[1 - current];
-        if (!src || !dst) break;
-        gl.bindFramebuffer(gl.FRAMEBUFFER, dst.fbo);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, src.tex);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-        current = 1 - current;
+    const bindTex = (unit: number, t: Target) => {
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, t.tex);
+      return unit;
+    };
+    const run = (p: Program, out: Target | null, set: (p: Program) => void) => {
+      gl.useProgram(p.program);
+      if (out) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, out.fbo);
+        gl.viewport(0, 0, out.w, out.h);
+        gl.uniform2f(p.u("u_texel"), 1 / out.w, 1 / out.h);
+      } else {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, canvas.width, canvas.height);
       }
-      pointer.px = pointer.x;
-      pointer.py = pointer.y;
-      pointer.moved = false;
-      return splat;
+      set(p);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+
+    const splat = (s: Splat, dt: number) => {
+      if (!fields) return;
+      const p = params.current;
+      const f = fields;
+      const aspect = cssW / cssH;
+      const radius = Math.max(0.002, (p.splatRadius / 100) * 1.6) * (aspect < 1 ? aspect : 1);
+      // Pointer velocity in velocity-grid cells per second.
+      const vx = (s.dx * f.velocity.read.w) / dt;
+      const vy = (s.dy * f.velocity.read.h) / dt;
+      const force = 0.35 * p.splatForce;
+      run(progs.splat, f.velocity.write, (q) => {
+        gl.uniform1i(q.u("u_target"), bindTex(0, f.velocity.read));
+        gl.uniform2f(q.u("u_point"), s.x, s.y);
+        gl.uniform3f(q.u("u_value"), vx * force, vy * force, 0);
+        gl.uniform1f(q.u("u_radius"), radius);
+        gl.uniform1f(q.u("u_aspect"), aspect);
+        gl.uniform1f(q.u("u_chop"), 0);
+        gl.uniform2f(q.u("u_seed"), 0, 0);
+      });
+      f.velocity.swap();
+      // Dye: displacement along the stroke, in uv, plus intensity for the glints.
+      const speed = Math.hypot(s.dx * aspect, s.dy);
+      const push = 1.6 * p.splatForce;
+      run(progs.splat, f.dye.write, (q) => {
+        gl.uniform1i(q.u("u_target"), bindTex(0, f.dye.read));
+        gl.uniform2f(q.u("u_point"), s.x, s.y);
+        gl.uniform3f(q.u("u_value"), s.dx * push, s.dy * push, Math.min(1, speed * 25));
+        gl.uniform1f(q.u("u_radius"), radius * 0.9);
+        gl.uniform1f(q.u("u_aspect"), aspect);
+        gl.uniform1f(q.u("u_chop"), 1);
+        gl.uniform2f(q.u("u_seed"), Math.random() * 50, Math.random() * 50);
+      });
+      f.dye.swap();
+    };
+
+    const step = (dt: number) => {
+      if (!fields) return;
+      const p = params.current;
+      const f = fields;
+      const vt = f.velocity.read;
+      run(progs.curl, f.curl, (q) => {
+        gl.uniform1i(q.u("u_velocity"), bindTex(0, f.velocity.read));
+      });
+      run(progs.vorticity, f.velocity.write, (q) => {
+        gl.uniform1i(q.u("u_velocity"), bindTex(0, f.velocity.read));
+        gl.uniform1i(q.u("u_curl"), bindTex(1, f.curl));
+        gl.uniform1f(q.u("u_curlStrength"), p.curl);
+        gl.uniform1f(q.u("u_dt"), dt);
+      });
+      f.velocity.swap();
+      run(progs.divergence, f.divergence, (q) => {
+        gl.uniform1i(q.u("u_velocity"), bindTex(0, f.velocity.read));
+      });
+      run(progs.scale, f.pressure.write, (q) => {
+        gl.uniform1i(q.u("u_source"), bindTex(0, f.pressure.read));
+        gl.uniform1f(q.u("u_value"), Math.min(1, Math.max(0, p.pressureDissipation)));
+      });
+      f.pressure.swap();
+      const iterations = Math.max(1, Math.min(120, Math.round(p.pressureIterations)));
+      for (let i = 0; i < iterations; i++) {
+        run(progs.pressure, f.pressure.write, (q) => {
+          gl.uniform1i(q.u("u_pressure"), bindTex(0, f.pressure.read));
+          gl.uniform1i(q.u("u_divergence"), bindTex(1, f.divergence));
+        });
+        f.pressure.swap();
+      }
+      run(progs.gradient, f.velocity.write, (q) => {
+        gl.uniform1i(q.u("u_pressure"), bindTex(0, f.pressure.read));
+        gl.uniform1i(q.u("u_velocity"), bindTex(1, f.velocity.read));
+      });
+      f.velocity.swap();
+      // Dissipation is given per 60 fps frame; convert to this frame's dt.
+      const frames = dt * 60;
+      run(progs.advect, f.velocity.write, (q) => {
+        gl.uniform1i(q.u("u_velocity"), bindTex(0, f.velocity.read));
+        gl.uniform1i(q.u("u_source"), bindTex(1, f.velocity.read));
+        gl.uniform2f(q.u("u_velTexel"), 1 / vt.w, 1 / vt.h);
+        gl.uniform1f(q.u("u_dt"), dt);
+        gl.uniform1f(q.u("u_keep"), Math.pow(Math.min(1, p.velocityDissipation), frames));
+      });
+      f.velocity.swap();
+      run(progs.advect, f.dye.write, (q) => {
+        gl.uniform1i(q.u("u_velocity"), bindTex(0, f.velocity.read));
+        gl.uniform1i(q.u("u_source"), bindTex(1, f.dye.read));
+        gl.uniform2f(q.u("u_velTexel"), 1 / vt.w, 1 / vt.h);
+        gl.uniform1f(q.u("u_dt"), dt);
+        gl.uniform1f(q.u("u_keep"), Math.pow(Math.min(1, p.dyeDissipation), frames));
+      });
+      f.dye.swap();
     };
 
     const render = () => {
+      if (!fields) return;
       const p = params.current;
-      const state = targets[current];
-      if (!state) return;
+      const f = fields;
       if (videoEl && ready && videoEl.readyState >= 2) upload(videoEl);
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.useProgram(dispProg);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, state.tex);
-      gl.uniform1i(dispLoc.state, 0);
-      gl.activeTexture(gl.TEXTURE1);
-      gl.bindTexture(gl.TEXTURE_2D, mediaTex);
-      gl.uniform1i(dispLoc.media, 1);
-      gl.uniform2f(dispLoc.texel, 1 / simW, 1 / simH);
       // Fit: scale the uv so the media covers (or fits inside) the box.
       const boxAspect = canvas.width / canvas.height;
       const mediaAspect = mediaW && mediaH ? mediaW / mediaH : boxAspect;
       const r = boxAspect / mediaAspect;
       const cover = p.fit === "cover";
-      const sx = cover ? Math.min(1, r) : Math.max(1, r);
-      const sy = cover ? Math.min(1, 1 / r) : Math.max(1, 1 / r);
-      gl.uniform2f(dispLoc.mediaScale, sx, sy);
-      gl.uniform1f(dispLoc.refraction, p.refraction);
-      gl.uniform1f(dispLoc.chroma, p.chromaticAmount);
-      gl.uniform1f(dispLoc.highlight, p.highlight);
-      gl.uniform3f(dispLoc.bg, ...hexToRgb(p.background));
-      gl.uniform1f(dispLoc.ready, ready ? 1 : 0);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      run(progs.display, null, (q) => {
+        gl.uniform2f(q.u("u_texel"), 1 / f.dye.read.w, 1 / f.dye.read.h);
+        gl.uniform1i(q.u("u_dye"), bindTex(0, f.dye.read));
+        gl.uniform1i(q.u("u_velocity"), bindTex(1, f.velocity.read));
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(gl.TEXTURE_2D, mediaTex);
+        gl.uniform1i(q.u("u_media"), 2);
+        gl.uniform2f(
+          q.u("u_mediaScale"),
+          cover ? Math.min(1, r) : Math.max(1, r),
+          cover ? Math.min(1, 1 / r) : Math.max(1, 1 / r),
+        );
+        gl.uniform1f(q.u("u_distortion"), p.distortion);
+        gl.uniform1f(q.u("u_chroma"), p.chromaticAmount);
+        gl.uniform1f(q.u("u_highlight"), p.highlight);
+        gl.uniform3f(q.u("u_bg"), ...hexToRgb(p.background));
+        gl.uniform1f(q.u("u_ready"), ready ? 1 : 0);
+      });
     };
 
-    const loop = () => {
-      const touched = step();
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let raf = 0;
+    let running = false;
+    let visible = true;
+    let last = 0;
+    let quietSeconds = 0;
+
+    const loop = (now: number) => {
+      const dt = Math.min(1 / 30, Math.max(1 / 240, (now - last) / 1000 || 1 / 60));
+      last = now;
+      const stirred = queue.length > 0 && !reduced.matches;
+      if (reduced.matches) queue.length = 0;
+      for (const s of queue.splice(0)) splat(s, dt);
+      step(dt);
       render();
-      quiet = touched ? 0 : quiet + 1;
-      // A video keeps the loop alive; a still image lets it sleep once ripples have died out
-      // (damping^frames below ~1e-3).
-      const settle = Math.ceil(
-        Math.log(1e-3) / Math.log(Math.min(0.999, params.current.damping)) / 2,
-      );
-      if (!videoEl && quiet > settle) {
+      quietSeconds = stirred ? 0 : quietSeconds + dt;
+      // A still image lets the loop sleep once the wake has faded (dye below ~1e-3 of a splat).
+      const p = params.current;
+      const keep = Math.min(0.999, Math.max(0.5, p.dyeDissipation));
+      const fade = Math.log(1e-3) / Math.log(keep) / 60;
+      if (!videoEl && quietSeconds > fade) {
         running = false;
         return;
       }
@@ -493,15 +707,19 @@ export function HoverWater({
         if (!running) render();
         return;
       }
-      quiet = 0;
       running = true;
+      quietSeconds = 0;
+      last = performance.now();
       raf = requestAnimationFrame(loop);
     }
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
     const io = new IntersectionObserver(([entry]) => {
       visible = entry?.isIntersecting ?? true;
       if (!visible) {
-        running = false;
-        cancelAnimationFrame(raf);
+        stop();
         videoEl?.pause();
       } else {
         void videoEl?.play().catch(() => {});
@@ -509,14 +727,13 @@ export function HoverWater({
       }
     });
     io.observe(box);
-    const onVisibility = () =>
-      document.hidden ? (cancelAnimationFrame(raf), (running = false)) : kick();
+    const onVisibility = () => (document.hidden ? stop() : kick());
     document.addEventListener("visibilitychange", onVisibility);
     kick();
 
     return () => {
       disposed = true;
-      cancelAnimationFrame(raf);
+      stop();
       io.disconnect();
       ro.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
@@ -530,16 +747,13 @@ export function HoverWater({
         videoEl.removeAttribute("src");
         videoEl.load();
       }
-      targets.forEach((t) => {
-        gl.deleteTexture(t.tex);
-        gl.deleteFramebuffer(t.fbo);
-      });
+      freeTargets();
       gl.deleteTexture(mediaTex);
       gl.deleteBuffer(buffer);
       gl.deleteVertexArray(vao);
-      gl.deleteProgram(simProg);
-      gl.deleteProgram(dispProg);
+      Object.values(progs).forEach((p) => gl.deleteProgram(p.program));
       gl.getExtension("WEBGL_lose_context")?.loseContext();
+      canvas.remove();
     };
   }, [src, video]);
 
@@ -555,9 +769,7 @@ export function HoverWater({
         ...style,
       }}
       {...rest}
-    >
-      <canvas ref={canvasRef} aria-hidden className="absolute inset-0 block h-full w-full" />
-    </div>
+    />
   );
 }
 
